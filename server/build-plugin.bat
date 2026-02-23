@@ -4,7 +4,8 @@ title Paper Plugin Build & Deploy (Server-Side Script)
 REM ================================
 REM CONFIG - EDIT THIS PATH ONLY (path to plugin folder)
 REM ================================
-set PROJECT_DIR=C:\Users\k9lil\Desktop\Github\emergex-crafty-chat-bot\crafty_bot
+set SCRIPT_DIR=%~dp0
+set PROJECT_DIR=%SCRIPT_DIR%..\crafty_bot
 
 REM ================================
 REM INTERNAL (DO NOT CHANGE)
