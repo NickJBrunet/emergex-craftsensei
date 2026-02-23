@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+# Allow folders so Git can still scan inside the repo
+!*/
+
+# Allow the main server jar
+!server.jar
+
+# Allow all README files
+!README*
+!readme*
+
+# Always track gitignore
+!.gitignore
