@@ -1,0 +1,5 @@
+name: CraftyBot
+version: 1.0.0
+main: io.github.craftsensei.CraftyBot
+api-version: "1.21"
+author: CraftyTeam
