@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
+from backend_server.settings import LOGIN_REDIRECT_URL
 
 def login_page(request):
     if request.user.is_authenticated:
-        return redirect("/dashboard/")
+        return redirect(LOGIN_REDIRECT_URL)
 
     if request.method == "POST":
         email = request.POST.get("email")
@@ -15,7 +16,7 @@ def login_page(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user)
-                return render(request, "login.html", {"error": "Logged in successfully!"})
+                return redirect(LOGIN_REDIRECT_URL)
             else:
                 raise Exception("Invalid credentials")
         except Exception:
