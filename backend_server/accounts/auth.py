@@ -13,5 +13,5 @@ class JWTAuth(HttpBearer):
             user_id = access["user_id"]
             user = User.objects.get(id=user_id)
             return user
-        except Exception(BaseException):
+        except Exception:
             return None

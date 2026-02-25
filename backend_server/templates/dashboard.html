@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Authenticated Dashboard</h1>
+
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+
+    <br>
+    <a href="/auth/logout/">Logout</a>
+</body>
+</html>
