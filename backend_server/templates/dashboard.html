@@ -6,8 +6,11 @@
 <body>
     <h1>Authenticated Dashboard</h1>
 
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Role:</strong> {{ user.role }}</p>
+    <h2>User Info</h2>
+    <p>Email: {{ user.email }}</p>
+    <p>Role: {{ user.role }}</p>
+    <p>User ID: {{ user.id }}</p>
+    <p>Last Login: {{ user.last_login }}</p>
 
     <br>
     <a href="/auth/logout/">Logout</a>

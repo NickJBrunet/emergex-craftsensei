@@ -21,7 +21,7 @@ from django.urls import path, include
 from accounts.views import dashboard
 
 urlpatterns = [
-    # path("", lambda request: redirect("/auth/login/")),
+    path("", lambda request: redirect("/auth/login/")),
     path('admin/', admin.site.urls),
     path("auth/", include("accounts.urls")),
     path("dashboard/", dashboard, name="dashboard"),

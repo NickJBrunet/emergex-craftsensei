@@ -1,10 +1,12 @@
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
 User = get_user_model()
-router = Router(tags=["Auth"])
+router = Router(auth=JWTAuth())
 
 
 def get_tokens_for_user(user):
