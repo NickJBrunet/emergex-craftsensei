@@ -1,3 +1,5 @@
+import requests
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -5,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from accounts.api import get_tokens_for_user
 from backend_server.settings import LOGIN_REDIRECT_URL, LOGOUT_REDIRECT_URL
 
+API_BASE = "http://127.0.0.1:8000/api"
 
 def login_page(request):
     if request.user.is_authenticated:
@@ -37,11 +40,62 @@ def login_page(request):
 
 @login_required
 def dashboard(request):
-    """
-    Authenticated-only page.
-    Automatically redirects to LOGIN_URL if not logged in.
-    """
-    return render(request, "dashboard.html")
+    access_token = request.session.get("access_token")
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = requests.get(f"{API_BASE}/servers/", headers=headers)
+
+    if response.status_code == 200:
+        server = response.json()[0]
+        print(server)
+        return render(request, "server_panel.html", {"server": server})
+
+    return render(request, "create_server.html")
+
+@login_required
+def create_server(request):
+    if request.method == "POST":
+        access_token = request.session.get("access_token")
+        name = request.POST.get("name")
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        requests.post(
+            API_BASE + "/servers/",
+            headers=headers,
+            json={"name": name}
+        )
+
+    return redirect("/dashboard/")
+
+@login_required
+def rotate_key(request):
+    if request.method == "POST":
+
+        access_token = request.session.get("access_token")
+        name = request.POST.get("name")
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.get(f"{API_BASE}/servers/", headers=headers)
+        server = response.json()[0]
+
+        requests.post(
+            API_BASE + "/servers/" + server.id + "/rotate-key",
+            headers=headers,
+            json={"name": name}
+        )
+
+    return redirect("/dashboard/")
 
 
 @login_required

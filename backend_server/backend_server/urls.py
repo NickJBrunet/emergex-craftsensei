@@ -18,11 +18,10 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
 
+from .api import api
 from accounts.views import dashboard
-
 urlpatterns = [
-    path("", lambda request: redirect("/auth/login/")),
-    path('admin/', admin.site.urls),
-    path("auth/", include("accounts.urls")),
-    path("dashboard/", dashboard, name="dashboard"),
+    path("auth/", include("accounts.urls_auth")),       # login/logout
+    path("dashboard/", include("accounts.urls_dashboard")),  # dashboard lifecycle
+    path("api/", api.urls),
 ]

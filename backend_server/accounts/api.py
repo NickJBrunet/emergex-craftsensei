@@ -1,12 +1,15 @@
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
+from ninja.errors import HttpError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
 User = get_user_model()
-router = Router(auth=JWTAuth())
+
+
+router = Router()
 
 
 def get_tokens_for_user(user):
@@ -24,7 +27,7 @@ def register(request, data: RegisterIn):
     Stored in PostgreSQL (accounts_user table).
     """
     if User.objects.filter(email=data.email).exists():
-        raise ValueError("Email already registered")
+        raise HttpError(403, "Email already registered")
 
     user = User.objects.create_user(
         email=data.email,
@@ -47,6 +50,6 @@ def login(request, data: LoginIn):
     )
 
     if user is None:
-        raise ValueError("Invalid email or password")
+        raise HttpError(403, "Invalid email or password")
 
     return get_tokens_for_user(user)

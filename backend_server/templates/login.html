@@ -1,24 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login Page</h2>
+{% extends "base.html" %}
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
+{% block title %}Login | Crafty{% endblock %}
 
-    <form method="post">
-        {% csrf_token %}
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h1 class="title">Crafty AI</h1>
+        <p class="subtitle">Sign in to manage your Minecraft servers</p>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
 
-        <button type="submit">Login</button>
-    </form>
-</body>
-</html>
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
