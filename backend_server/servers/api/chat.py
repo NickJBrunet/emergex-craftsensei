@@ -17,6 +17,8 @@ def bot_chat(request, data: ChatIn):
     - Minecraft plugin
     - Dashboard
     - External tools
+
+    POST localhost:8000/api/chat/chat
     """
 
     server = request.server      # the minecraft server
