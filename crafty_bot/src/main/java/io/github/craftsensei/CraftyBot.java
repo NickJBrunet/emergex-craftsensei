@@ -23,4 +23,4 @@ public final class CraftyBot extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Plugin Disabled!");
     }
-}
+} 
