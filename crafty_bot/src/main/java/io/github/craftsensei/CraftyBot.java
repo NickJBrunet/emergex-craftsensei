@@ -11,10 +11,7 @@ public final class CraftyBot extends JavaPlugin {
     public void onEnable() {
         ChatMessageHandler handler = new BasicChatMessageHandler("crafty");
 
-        getServer().getPluginManager().registerEvents(
-                new PlayerMessageEvent(handler),
-                this
-        );
+        getServer().getPluginManager().registerEvents(new PlayerMessageEvent(handler,this),this);
 
         getLogger().info("Plugin Enabled!");
     }
