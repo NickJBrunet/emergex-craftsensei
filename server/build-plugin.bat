@@ -75,5 +75,4 @@ if %errorlevel% neq 0 (
 echo.
 echo SUCCESS: Plugin built and deployed!
 echo Next step: FULL server restart (DO NOT USE /reload)
-java -Xmx12G -jar paper-1.21.11-126.jar nogui
 pause

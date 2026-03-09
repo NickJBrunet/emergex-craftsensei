@@ -7,9 +7,13 @@ from servers.models import ChatLog
 from servers.schemas import ChatIn
 from servers.services import generate_bot_response
 
+from django.views.decorators.csrf import csrf_exempt
+
+
 router = Router()
 
-@router.post("/chat", auth=ServerAPIKeyAuth())
+@router.post("/chat", auth=ServerAPIKeyAuth(), csrf=False)
+@csrf_exempt
 def bot_chat(request, data: ChatIn):
     """
     Core endpoint for Crafty AI bot interaction.
