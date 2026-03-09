@@ -16,6 +16,8 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.InputStream;
 import java.util.Map;
 
+import io.github.craftsensei.CraftyBot;
+
 public class Messenger {
     // called from BasicChatMessageHandler
     public CompletableFuture<String> sendToDjango(Player player, String message) {
@@ -53,19 +55,22 @@ public class Messenger {
 
             // create request
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + "/api/chat/chat/"))
+                    .uri(URI.create(baseUrl + "/api/chat/chat"))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + apiKey)
+                    .header("X-API-Key", apiKey)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
             // send request to backend server
             return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenApply(responseBody -> {
-                        JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class);
-                        return responseJson.get("response").getAsString();
-                    });
+                .thenApply(response -> {
+
+                    CraftyBot.getInstance().getLogger().info("HTTP STATUS: " + response.statusCode());
+                    CraftyBot.getInstance().getLogger().info("DJANGO RESPONSE: " + response.body());
+
+                    JsonObject responseJson = gson.fromJson(response.body(), JsonObject.class);
+                    return responseJson.get("response").getAsString();
+                });
 
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
