@@ -14,14 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.shortcuts import redirect
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from .api import api
-from accounts.views import dashboard
+
+
+def redirect_to_login(request):
+    return redirect("/auth/login/")
+
 urlpatterns = [
     path("auth/", include("accounts.urls_auth")),       # login/logout
     path("dashboard/", include("accounts.urls_dashboard")),  # dashboard lifecycle
     path("api/", api.urls),
+
+    # Catch-all redirect
+    re_path(r"^.*$", redirect_to_login),
 ]

@@ -48,10 +48,12 @@ def dashboard(request):
 
     response = requests.get(f"{API_BASE}/servers/", headers=headers)
 
-    if response.status_code == 200:
-        server = response.json()[0]
-        print(server)
-        return render(request, "server_panel.html", {"server": server})
+    try:
+        if response.status_code == 200:
+            server = response.json()[0]
+            return render(request, "server_panel.html", {"server": server})
+    except Exception:
+        print(Exception)
 
     return render(request, "create_server.html")
 
@@ -76,24 +78,28 @@ def create_server(request):
 
 @login_required
 def rotate_key(request):
-    if request.method == "POST":
-
-        access_token = request.session.get("access_token")
-        name = request.POST.get("name")
-
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
-
-        response = requests.get(f"{API_BASE}/servers/", headers=headers)
-        server = response.json()[0]
-
-        requests.post(
-            API_BASE + "/servers/" + server.id + "/rotate-key",
-            headers=headers,
-            json={"name": name}
-        )
+    # if request.method == "POST":
+    #
+    #     access_token = request.session.get("access_token")
+    #     name = request.POST.get("name")
+    #
+    #     headers = {
+    #         "Authorization": f"Bearer {access_token}",
+    #         "Content-Type": "application/json"
+    #     }
+    #
+    #     response = requests.get(f"{API_BASE}/servers/", headers=headers)
+    #     server = response.json() if not response.json()[0] else response.json()[0]
+    #
+    #     try:
+    #         if response.status_code == 200:
+    #             requests.post(
+    #                 API_BASE + "/servers/" + server.id + "/rotate-key",
+    #                 headers=headers,
+    #                 json={"name": name}
+    #             )
+    #     except Exception as e:
+    #         print(e)
 
     return redirect("/dashboard/")
 
