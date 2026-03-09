@@ -53,7 +53,7 @@ public class Messenger {
 
             // create request
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl))
+                    .uri(URI.create(baseUrl + "/api/chat/chat/"))
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + apiKey)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
