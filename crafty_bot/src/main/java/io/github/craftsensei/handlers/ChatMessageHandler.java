@@ -1,7 +1,9 @@
 package io.github.craftsensei.handlers;
 
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import org.bukkit.entity.Player;
 
 public interface ChatMessageHandler {
-    Optional<String> handle(String playerName, String message);
+    CompletableFuture<String> handle(Player player, String message);
 }
