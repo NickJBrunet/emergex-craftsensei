@@ -1,7 +1,7 @@
 from openai import OpenAI
 
 # TEMPORARY: hardcoded key for local testing only
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 
 def generate_bot_response(message: str) -> str:
