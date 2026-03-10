@@ -1,7 +1,18 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 from openai import OpenAI
 
-# TEMPORARY: hardcoded key for local testing only
-client = OpenAI(api_key="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")
+# Build exact path to backend_server/.env
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
+
+# Force-load .env and override any existing wrong env var
+load_dotenv(dotenv_path=ENV_PATH, override=True)
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 
 def generate_bot_response(message: str) -> str:
@@ -11,9 +22,11 @@ def generate_bot_response(message: str) -> str:
 
     message_lower = message.lower()
 
-    # quick responses (optional)
     if "ping" in message_lower:
         return "Pong!"
+
+    if not OPENAI_API_KEY or not client:
+        return "AI service is not configured."
 
     try:
         response = client.chat.completions.create(
@@ -22,11 +35,15 @@ def generate_bot_response(message: str) -> str:
                 {
                     "role": "system",
                     "content": """
-                        You are Crafty, a helpful Minecraft server assistant. 
-                        Only respond to questions related to Minecraft such as gameplay, commands, server management, mods, and plugins. 
-                        If a message is unrelated to Minecraft, politely say that you can only assist with Minecraft-related questions.w
-                        Response should be concise and informative, ideally 2-3 sentences.
-                        """
+                                You are Crafty, a helpful Minecraft server assistant.
+                                Only respond to questions related to Minecraft such as gameplay,
+                                commands, server management, mods, and plugins.
+
+                                If a message is unrelated to Minecraft, politely say that you can
+                                only assist with Minecraft-related questions.
+
+                                Responses should be concise and informative, ideally 2-3 sentences.
+                                """
                 },
                 {
                     "role": "user",
