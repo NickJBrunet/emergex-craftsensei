@@ -1,6 +1,9 @@
 # Ignore everything
 *
 
+# Ignore .env file which contains sensitive information like API keys
+.env
+
 # Allow folders so Git can still scan inside the repo
 !*/
 
