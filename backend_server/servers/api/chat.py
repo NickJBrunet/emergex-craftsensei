@@ -7,13 +7,9 @@ from servers.models import ChatLog
 from servers.schemas import ChatIn
 from servers.services import generate_bot_response
 
-from django.views.decorators.csrf import csrf_exempt
-
-
 router = Router()
 
-@router.post("/chat", auth=ServerAPIKeyAuth(), csrf=False)
-@csrf_exempt
+@router.post("/chat", auth=ServerAPIKeyAuth())
 def bot_chat(request, data: ChatIn):
     """
     Core endpoint for Crafty AI bot interaction.
@@ -40,20 +36,14 @@ def bot_chat(request, data: ChatIn):
     except Exception as e:
         bot_reply = ""
         success = False
-        error_message = str(e)
-
-    response_time_ms = int((time.time() - start_time) * 1000)
 
     ChatLog.objects.create(
+        server=request.server,
         user=request.user,
         player_uuid=data.player_uuid,
         player_username=data.player_username,
         player_message=data.message,
         bot_message=bot_reply,
-        success=success,
-        error_message=error_message,
-        response_time_ms=response_time_ms,
+        success=success
     )
-    return {
-        "reply": bot_reply
-    }
+    return {"response": bot_reply}
