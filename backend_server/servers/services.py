@@ -12,9 +12,6 @@ load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-print("Using .env file at:", ENV_PATH)
-print("OPENAI key starts with:", (OPENAI_API_KEY or "")[:12])
-
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 
