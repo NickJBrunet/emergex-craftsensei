@@ -188,17 +188,22 @@ export default function Home() {
                   </li>
                 </ul>
               </div>
-              <div className="relative h-96 w-full rounded-3xl bg-gradient-to-br from-emerald-900/30 via-black/50 to-emerald-900/20 p-8 lg:h-[500px] backdrop-blur-xl border border-emerald-500/30">
+
+              {/* Make Crafty bot bounce on click maybe also flip horizontally or spin while bouncing */}
+              <div className="relative h-96 w-full rounded-3xl bg-gradient-to-br from-emerald-900/30 via-black/50 to-emerald-900/20 p-8 lg:h-[500px] backdrop-blur-xl border border-emerald-500/30 top-17">
                 <Image
-                  src="/images/crafty-character.png" 
+                  src="/images/finalCrafty2.png" 
                   alt="Meet Crafty - Your Minecraft AI companion"
                   fill
+                  draggable="false"
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain rounded-2xl shadow-2xl"
+                  className="object-contain rounded-2xl shadow-2xl animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing"
                 />
+                {/* Temp will fix with usestate and handler for onclick */}
+                {/* animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing */}
 
                 {/* Not needed */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-transparent to-emerald-500/20 rounded-3xl blur opacity-75" />
+                {/* <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-transparent to-emerald-500/20 rounded-3xl blur opacity-75" /> */}
               </div>
             </div>
           </div>
