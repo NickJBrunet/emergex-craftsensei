@@ -1,7 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 @import "tailwindcss";
-
 
 :root {
   --background: #ffffff;
@@ -11,6 +11,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-silkscreen: "Silkscreen", sans-serif;
+  --font-press-start: "'Press Start 2P'", monospace;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -37,3 +39,36 @@ body {
   letter-spacing: -0.08em;
   word-spacing: -0.15em;
 }
+
+
+.silkscreen {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.silkscreen-bold {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+/* Test performance on mobile and low refresh rates */
+.animate-bounce-custom {
+  animation: var(--animate-bounce);
+  bounce: 1s 
+}
+
+@keyframes animate-bounce-custom {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+

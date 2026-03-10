@@ -38,7 +38,7 @@ public class Messenger {
             apiKey = (String) data.get("craft-api-key");
 
         } catch (Exception e) {
-           return CompletableFuture.failedFuture(e);
+            return CompletableFuture.failedFuture(e);
         }
 
         try {
@@ -77,5 +77,3 @@ public class Messenger {
         }
     }
 }
-
-

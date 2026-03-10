@@ -11,7 +11,7 @@ export default function Navbar() {
           <header className="sticky top-0 z-30 bg-[#22190a] px-6 py-3 shadow-md">
             <nav className="mx-auto flex px-10 items-center justify-between">
       
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-5">
                 <div className="relative h-8 w-8">
                   <Image
                     src="/images/minecraft_block.jpg"
@@ -23,7 +23,7 @@ export default function Navbar() {
                   />
                 </div>
                 
-                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-semibold tracking-tight text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:underline active:scale-95">
+                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 pb-1">
                 Craft Sensei
                 </Link>
 
