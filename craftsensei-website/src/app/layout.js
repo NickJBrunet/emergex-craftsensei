@@ -14,6 +14,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Craft Sensei",
   description: "A Minecraft AI chat Mod",
+  icons: {
+    icon: "/minecraft_logo.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
