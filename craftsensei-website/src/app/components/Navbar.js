@@ -12,18 +12,20 @@ export default function Navbar() {
             <nav className="mx-auto flex px-10 items-center justify-between">
       
               <div className="flex items-center gap-5">
-                <div className="relative h-8 w-8">
+                <div className="relative h-10 w-10">
+                  
+                  {/* Add feature if logo clicked 31 times title changes to craft skibidi */}
                   <Image
-                    src="/images/minecraft_block.jpg"
+                    src="/minecraft_logo.svg"
                     // To be replaced with the Craft Sensei logo once designed. For now, using a placeholder Minecraft bot image.
                     alt="Craft Sensei Logo"
                     fill
                     sizes="32px"
-                    className="rounded-sm object-cover"
+                    className="rounded-sm object-contain hover:animate-spin hover:cursor-pointer active:scale-80"
                   />
                 </div>
                 
-                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 pb-1">
+                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 flex items-center pb-1">
                 Craft Sensei
                 </Link>
 

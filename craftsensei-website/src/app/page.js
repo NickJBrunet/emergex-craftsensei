@@ -189,7 +189,10 @@ export default function Home() {
                 </ul>
               </div>
 
-              {/* Make Crafty bot bounce on click maybe also flip horizontally or spin while bouncing */}
+              {/* Make Crafty bot bounce on click maybe also flip horizontally or spin while bouncing 
+              Also removed gradient in bottom right corner so the bounce effect doesnt just look like a ong floating
+              
+              */}
               <div className="relative h-96 w-full rounded-3xl bg-gradient-to-br from-emerald-900/30 via-black/50 to-emerald-900/20 p-8 lg:h-[500px] backdrop-blur-xl border border-emerald-500/30 top-17">
                 <Image
                   src="/images/finalCrafty2.png" 
@@ -197,7 +200,7 @@ export default function Home() {
                   fill
                   draggable="false"
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain rounded-2xl shadow-2xl animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing"
+                  className="object-contain rounded-2xl animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing"
                 />
                 {/* Temp will fix with usestate and handler for onclick */}
                 {/* animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing */}
