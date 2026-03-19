@@ -2,16 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Navbar() { 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
 
   return (
           <header className="sticky top-0 z-30 bg-[#22190a] px-6 py-3 shadow-md">
-            <nav className="mx-auto flex px-10 items-center justify-between">
+            <nav className="mx-auto gap-5 flex px-1 sm:px-10 items-center justify-between">
       
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-3 sm:gap-5">
                 <div className="relative h-10 w-10">
                   
                   {/* Add feature if logo clicked 31 times title changes to craft skibidi */}
@@ -25,7 +27,7 @@ export default function Navbar() {
                   />
                 </div>
                 
-                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 flex items-center pb-1">
+                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-2xl md:text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 flex items-center pb-1">
                 Craft Sensei
                 </Link>
 
@@ -45,18 +47,46 @@ export default function Navbar() {
               </div>
     
               <div className="flex items-center gap-3">
-                <button className="hover:cursor-pointer rounded-full border border-emerald-200/60 px-4 py-1.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/40">
-                <Link href="/auth/login">
-                  Log in
-                </Link>
-                </button>
-                <button className="hover:cursor-pointer rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400">
-                <Link href="/auth/signup">
-                  Sign Up
-                </Link>
+                <div className="md:flex hidden items-center gap-3">
+                  <button className="hover:cursor-pointer rounded-full border border-emerald-200/60 px-4 py-1.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/40">
+                  <Link href="/auth/login">
+                    Log in
+                  </Link>
+                  </button>
+                  <button className="hover:cursor-pointer rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400">
+                  <Link href="/auth/signup">
+                    Sign Up
+                  </Link>
+                  </button>
+                </div>
+                <button 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1"
+                >
+                  <span className="block w-5 h-0.5 bg-white"></span>
+                  <span className="block w-5 h-0.5 bg-white"></span>
+                  <span className="block w-5 h-0.5 bg-white"></span>
                 </button>
               </div>
             </nav>
+            {isMenuOpen && (
+              <div className="md:hidden bg-[#22190a] mt-3 border-t border-emerald-500/20 px-6 py-4">
+                <Link 
+                  href="/auth/login" 
+                  className="block py-2 text-emerald-50 hover:text-emerald-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Log in
+                </Link>
+                <Link 
+                  href="/auth/signup" 
+                  className="block py-2 text-emerald-50 hover:text-emerald-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </header>
 
   );

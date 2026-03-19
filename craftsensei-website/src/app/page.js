@@ -99,6 +99,14 @@ export default function Home() {
                 Minecraft server to answer crafting questions, suggest builds,
                 and help you survive the night.
               </p>
+
+              {/* <p className="text-base font-semibold text-zinc-200 sm:text-lg [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
+                Craft Sensei Mod brings an intelligent chat bot <span className="font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] pb-2">Crafty</span> into your
+                Minecraft server to answer crafting questions, suggest builds,
+                and help you survive the night.
+              </p> */}
+
+
               <div className="flex flex-wrap items-center gap-4">
                 <button
                   type="button"
@@ -381,11 +389,11 @@ export default function Home() {
  * 
  * 
  * ======= DONE =========
- * Create a log in/signup page
+ * Create a log in/signup page - done
  * 
- * Create an about the developers page
+ * Create an about the developers page - done
  * 
- * Create a support page (users can fill out form)
+ * Create a support page (users can fill out form) - done
  * 
  * Add a back home button to login and signup pages
  * 
