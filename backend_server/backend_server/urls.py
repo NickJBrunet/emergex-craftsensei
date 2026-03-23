@@ -19,15 +19,8 @@ from django.urls import path, include, re_path
 
 from .api import api
 
-
-def redirect_to_login(request):
-    return redirect("/auth/login/")
-
 urlpatterns = [
     path("auth/", include("accounts.urls_auth")),       # login/logout
     path("dashboard/", include("accounts.urls_dashboard")),  # dashboard lifecycle
     path("api/", api.urls),
-
-    # Catch-all redirect
-    re_path(r"^.*$", redirect_to_login),
 ]

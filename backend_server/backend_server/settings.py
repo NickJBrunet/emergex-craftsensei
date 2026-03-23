@@ -46,13 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'backend_server.middleware.CsrfExemptApiMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -77,6 +78,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_server.wsgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:25565",
+    "http://127.0.0.1:25565",
+]
+
+CSRF_COOKIE_SECURE = False  # or True if using HTTPS
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

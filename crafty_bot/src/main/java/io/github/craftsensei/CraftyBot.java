@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CraftyBot extends JavaPlugin {
 
+    private static CraftyBot instance;
+
     @Override
     public void onEnable() {
         ChatMessageHandler handler = new BasicChatMessageHandler("crafty");
@@ -14,10 +16,16 @@ public final class CraftyBot extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerMessageEvent(handler,this),this);
 
         getLogger().info("Plugin Enabled!");
+
+        instance = this;
     }
 
     @Override
     public void onDisable() {
         getLogger().info("Plugin Disabled!");
+    }
+
+    public static CraftyBot getInstance() {
+        return instance;
     }
 } 
