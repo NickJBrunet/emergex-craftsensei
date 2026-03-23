@@ -39,6 +39,7 @@ ROOT_URLCONF = 'backend_server.urls'
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     'accounts',
     'servers',
     'django.contrib.admin',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,6 +83,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CSRF_COOKIE_SECURE = False  # or True if using HTTPS
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

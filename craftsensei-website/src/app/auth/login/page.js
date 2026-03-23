@@ -2,14 +2,22 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
+import handleLogin from '@/utils/auth/handleLogin'
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login:', formData);
-    // Handle login logic
+
+    handleLogin(formData)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+
   };
 
   const handleChange = (e) => {
