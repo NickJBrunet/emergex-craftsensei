@@ -2,23 +2,49 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const [formData, setFormData] = useState({ 
     name: '', 
     email: '', 
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    loading: false,
+    error: '',
   });
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setFormData({ ...formData, error: 'Passwords do not match' });
       return;
     }
-    console.log('Signup:', formData);
-    // Handle signup logic
+
+    try {
+      setFormData({ ...formData, loading: true, error: '' });
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (res.ok) {
+        router.push('/auth/login?message=account_created');
+      } else {
+        const data = await res.json();
+        setFormData({ ...formData, error: data.error || 'Signup failed' });
+      }
+    } catch (err) {
+      setFormData({ ...formData, error: 'Signup failed' });
+    } finally {
+      setFormData({ ...formData, loading: false });
+    } 
   };
 
   const handleChange = (e) => {
@@ -107,7 +133,7 @@ export default function Signup() {
                     onChange={handleChange}
                     required
                     className="w-full px-5 py-3 rounded-xl bg-black/70 border border-emerald-500/50 text-zinc-100 backdrop-blur-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all text-base placeholder-zinc-400"
-                    placeholder="••••••••"
+                    placeholder="•••••••• (Min. 6 chars)"
                   />
                 </div>
 
@@ -129,10 +155,17 @@ export default function Signup() {
 
                 <button
                   type="submit"
+                  disabled={formData.loading}
                   className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-emerald-950 shadow-lg hover:scale-105 active:scale-95 transition-all hover:cursor-pointer hover:bg-black hover:text-white hover:border-emerald-500/50 hover:border-2 max-h-14"
                 >
-                  Create Account
+                  {formData.loading ? "Creating..." : "Create Account"}
                 </button>
+
+                {formData.error && (
+                  <div className="rounded-xl bg-red-500/20 border border-red-500/50 p-4 text-red-200">
+                    {formData.error}
+                  </div>
+                )}
               </form>
 
               <div className="mt-8 text-center">
