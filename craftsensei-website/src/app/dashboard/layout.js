@@ -24,7 +24,6 @@ export default function DashboardLayout({ children }) {
     }
   };
 
-  // Handle swipe gestures
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     window.touchStartX = touch.clientX;
