@@ -32,3 +32,8 @@ npm i bcryptjs
 npx drizzle-kit push
 
 ```
+
+## Accreditation
+
+Website creation and design by Levi Moreau
+"Crafty" design by Rachel Payette
