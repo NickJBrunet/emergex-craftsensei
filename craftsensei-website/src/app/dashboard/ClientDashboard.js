@@ -35,7 +35,7 @@ export default function ClientDashboard({ userName }) {
       },
       {
         title: "API key generated",
-        desc: "Use this key later when backend integration is added.",
+        desc: "Use this key to connect your Crafty bot to your Minecraft server.",
         time: "Just now",
       },
     ],
@@ -135,10 +135,9 @@ export default function ClientDashboard({ userName }) {
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Register your server</h2>
             <p className="mt-2 text-sm text-zinc-300">
-              This form is local-only for now. It stores the data in the dashboard UI until you connect your backend.
+              This form is local-only for now. It stores the data in the dashboard UI until we connect it with the backend.
             </p>
             <form onSubmit={handleRegisterServer} className="mt-6 grid gap-4 md:grid-cols-2">
-              {/* All your form fields - unchanged */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-zinc-200">Server Name</label>
                 <input
@@ -198,7 +197,6 @@ export default function ClientDashboard({ userName }) {
             </form>
           </div>
 
-          {/* Registered Servers List - Exact same */}
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Registered servers</h2>
             {registeredServers.length === 0 ? (
@@ -228,13 +226,12 @@ export default function ClientDashboard({ userName }) {
           </div>
         </div>
 
-        {/* Right column - API Key + Activity */}
         <div className="space-y-6">
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">API Key</p>
             <h2 className="mt-2 text-2xl font-semibold text-white">Your server key</h2>
             <p className="mt-2 text-sm text-zinc-300">
-              This is generated locally for now. Later you can replace this with a backend-issued key.
+              *This is generated locally for now. Later it will be replaced with a backend-issued key.
             </p>
             <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-zinc-950 p-4 font-mono text-sm text-emerald-200 break-all">
               {generatedApiKey || "No API key generated yet."}
@@ -272,7 +269,7 @@ export default function ClientDashboard({ userName }) {
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <p className="text-sm font-semibold text-white">Next steps</p>
             <ul className="mt-4 space-y-3 text-sm text-zinc-300">
-              <li>• Connect this form to your backend API.</li>
+              <li>• Connect this dashboard form to backend API.</li>
               <li>• Save server registrations per user account.</li>
               <li>• Generate persistent API keys server-side.</li>
               <li>• Add a revoke/reset key option.</li>
@@ -283,3 +280,5 @@ export default function ClientDashboard({ userName }) {
     </>
   );
 }
+
+
