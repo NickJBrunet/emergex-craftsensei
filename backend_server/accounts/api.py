@@ -107,6 +107,12 @@ def login(request, data: LoginIn):
 
 @router.post("/logout")
 def logout(request):
+
+    user = request.auth
+
+    if not user:
+        raise HttpError(401, "Not authenticated")
+
     response = JsonResponse({"success": True})
 
     response.delete_cookie(

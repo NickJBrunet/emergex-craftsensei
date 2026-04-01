@@ -22,7 +22,6 @@ export default function DashboardLayout({ children }) {
   const handleLogout = () => {
     logout().then(() => {
 
-        console.log("Logging Out!!!");
         router.push("/");
 
     }).catch((err) => {
