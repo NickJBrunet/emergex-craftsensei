@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, get_user_model
 from ninja.errors import HttpError
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
 User = get_user_model()
@@ -19,6 +20,20 @@ def get_tokens_for_user(user):
         "refresh": str(refresh),
     }
 
+
+@router.get("/me", auth=JWTAuth())
+def me(request):
+    user = request.auth
+
+    print("Hello?")
+
+    if not user:
+        raise HttpError(401, "Not authenticated")
+
+    return {
+        "id": user.id,
+        "email": user.email,
+    }
 
 @router.post("/register", response=TokenOut)
 def register(request, data: RegisterIn):
@@ -87,5 +102,15 @@ def login(request, data: LoginIn):
         samesite="Lax",
         path="/",
     )
+
+    return response
+
+
+@router.post("/logout")
+def logout(request):
+    response = JsonResponse({"success": True})
+
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
 
     return response

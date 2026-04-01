@@ -9,24 +9,24 @@ export default function Navbar() {
   const [session, setSession] = useState(null);
 
   // Fetch session from your /api/auth/session endpoint
-  useEffect(() => {
-    async function fetchSession() {
-      try {
-        const res = await fetch("/api/auth/session", { cache: "no-store" });
-        const data = await res.json();
-        setSession(data.session);
-      } catch (err) {
-        console.error("Session fetch error:", err);
-      }
-    }
-    fetchSession();
-  }, []);
-
-  // Handle logout by clearing the token cookie via backend route
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     try {
+  //       const res = await fetch("/api/auth/session", { cache: "no-store" });
+  //       const data = await res.json();
+  //       setSession(data.session);
+  //     } catch (err) {
+  //       console.error("Session fetch error:", err);
+  //     }
+  //   }
+  //   fetchSession();
+  // }, []);
+  //
+  // // Handle logout by clearing the token cookie via backend route
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setSession(null);
-    window.location.href = "/"; // redirect to home
+    // await fetch("/api/auth/logout", { method: "POST" });
+    // setSession(null);
+    // window.location.href = "/"; // redirect to home
   };
 
   return (

@@ -1,21 +1,18 @@
-from ninja.security import HttpBearer
-from rest_framework_simplejwt.tokens import AccessToken, Token
+from ninja.security import APIKeyCookie
+from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# Overwrites pre-existing JWTAuth for slightly custom auth rules
-# where token must relate to signed-up user
-class JWTAuth(HttpBearer):
-    def authenticate(self, request, token=None):
-        token = request.COOKIES.get("access_token")
 
-        if not token:
-            return None
+class JWTAuth(APIKeyCookie):
+    param_name = "access_token"
 
+    def authenticate(self, request, key):
         try:
-            validated = AccessToken(token)
+            validated = AccessToken(key)
             user = User.objects.get(id=validated["user_id"])
             return user
-        except Exception:
+        except Exception as e:
+            print("JWT ERROR:", e)
             return None

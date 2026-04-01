@@ -2,10 +2,14 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from "next/navigation";
+import createUserAccount from "@/utils/auth/createUserAccount";
+import { useRouter } from 'next/navigation';
+import {useAuth} from "@/app/context/authContext";
 
 export default function Signup() {
-  const [formData, setFormData] = useState({ 
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
     name: '', 
     email: '', 
     password: '',
@@ -13,7 +17,6 @@ export default function Signup() {
     loading: false,
     error: '',
   });
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,29 +25,48 @@ export default function Signup() {
       return;
     }
 
-    try {
-      setFormData({ ...formData, loading: true, error: '' });
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+    // try {
+    //   setFormData({ ...formData, loading: true, error: '' });
+    //   const res = await fetch('/api/auth/signup', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       name: formData.name,
+    //       email: formData.email,
+    //       password: formData.password,
+    //     }),
+    //   });
+    //
+    //   if (res.ok) {
+    //     router.push('/auth/login?message=account_created');
+    //   } else {
+    //     const data = await res.json();
+    //     setFormData({ ...formData, error: data.error || 'Signup failed' });
+    //   }
+    // } catch (err) {
+    //   setFormData({ ...formData, error: 'Signup failed' });
+    // } finally {
+    //   setFormData({ ...formData, loading: false });
+    // }
+
+    // Intentionally Ignored Name Attribute for now, as DB
+    // does not except name/username field.
+    createUserAccount({email: formData.email, password: formData.password})
+      .then((res) => {
+
+        console.log(res);
+
+        // Handle Dashboard Re-direct Here.
+        router.push('/dashboard');
+      })
+      .catch((err) => {
+
+        // Handle Error UI Here.
+
+        console.error(err.message);
       });
 
-      if (res.ok) {
-        router.push('/auth/login?message=account_created');
-      } else {
-        const data = await res.json();
-        setFormData({ ...formData, error: data.error || 'Signup failed' });
-      }
-    } catch (err) {
-      setFormData({ ...formData, error: 'Signup failed' });
-    } finally {
-      setFormData({ ...formData, loading: false });
-    } 
+
   };
 
   const handleChange = (e) => {

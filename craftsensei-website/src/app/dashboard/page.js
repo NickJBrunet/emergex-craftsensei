@@ -1,26 +1,14 @@
-import { cookies } from 'next/headers'
+"use client";
+
 import { redirect } from 'next/navigation'
 import ClientDashboard from './ClientDashboard'
 import Image from 'next/image'
-import { findUserBySessionToken } from '../lib/users-db'
+import {useAuth} from "@/app/context/authContext";
 
-async function getServerUser() {
-  const cookieStore = await cookies()
-  const sessionToken = cookieStore.get('sessionToken')?.value
 
-  if (!sessionToken) return null
 
-  const user = await findUserBySessionToken(sessionToken)
-  if (!user) return null
-
-  return {
-    name: user.name,
-    email: user.email
-  }
-}
-
-export default async function DashboardPage() {
-  const user = await getServerUser()
+export default function DashboardPage() {
+  const { user } = useAuth()
 
   if (!user) {
     redirect('/auth/login')

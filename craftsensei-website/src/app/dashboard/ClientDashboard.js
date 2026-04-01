@@ -3,8 +3,8 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import {useAuth} from "@/app/context/authContext";
 
 export default function ClientDashboard({ userName }) {
   // All your existing state + logic stays the same
@@ -42,6 +42,9 @@ export default function ClientDashboard({ userName }) {
     []
   );
 
+  // Logout from auth context
+  const { logout } = useAuth();
+
   const handleChange = (e) => {
     setServerForm({
       ...serverForm,
@@ -50,12 +53,7 @@ export default function ClientDashboard({ userName }) {
   };
 
   const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    await logout()
   }; 
 
   const generateApiKey = () => {
@@ -300,7 +298,3 @@ export default function ClientDashboard({ userName }) {
     </>
   );
 }
-
-
-
-
