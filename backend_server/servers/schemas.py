@@ -1,21 +1,28 @@
 import datetime
 import uuid
-
 from ninja import Schema
 
-# Server Linking Schemas
+
 class ServerCreateIn(Schema):
     name: str
+    owner_ign: str
+    minecraft_version: str
+    server_ip: str
 
 
 class ServerUpdateIn(Schema):
     name: str | None = None
     is_active: bool | None = None
+    minecraft_version: str | None = None
+    owner_ign: str | None = None
 
 
 class ServerOut(Schema):
     id: uuid.UUID
     name: str
+    owner_ign: str
+    minecraft_version: str
+    server_ip: str
     is_active: bool
     created_at: datetime.datetime
 
@@ -24,10 +31,9 @@ class ServerOut(Schema):
 
 
 class ServerWithKeyOut(ServerOut):
-    api_key: str  # only returned on create/rotate
+    api_key: str
 
 
-# Chat Log
 class ChatIn(Schema):
     message: str
     player_uuid: uuid.UUID

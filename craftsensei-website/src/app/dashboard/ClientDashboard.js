@@ -1,12 +1,14 @@
-// NOTE: Currently this page just retains filler placeholder data as it is not connected to backend currently ts was all vibe coded btw lol
-
 'use client';
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import {useAuth} from "@/app/context/authContext";
+import {useServers} from "@/app/context/serverContext";
+import createUserServer from "@/utils/servers/createUserServer";
 
 export default function ClientDashboard({ userName }) {
+
+  const { servers, createServer } = useServers()
+
   // All your existing state + logic stays the same
   const [serverForm, setServerForm] = useState({
     serverName: "",
@@ -15,12 +17,13 @@ export default function ClientDashboard({ userName }) {
     ownerName: "",
   });
 
-  const [registeredServers, setRegisteredServers] = useState([]);
+  console.log(servers)
+
   const [generatedApiKey, setGeneratedApiKey] = useState("");
   const [copied, setCopied] = useState(false);
 
   const stats = [
-    { label: "Registered Servers", value: registeredServers.length.toString() },
+    { label: "Registered Servers", value: (servers?.length || 0).toString() },
     { label: "API Keys", value: generatedApiKey ? "1" : "0" },
     { label: "Active Chat Sessions", value: "0" },
     { label: "Uptime", value: "99.9%" },
@@ -61,19 +64,30 @@ export default function ClientDashboard({ userName }) {
 
   const handleRegisterServer = (e) => {
     e.preventDefault();
-    const newServer = {
-      id: Date.now(),
-      ...serverForm,
-      status: "Connected",
-      createdAt: new Date().toLocaleString(),
-    };
-    setRegisteredServers([newServer, ...registeredServers]);
-    setServerForm({
-      serverName: "",
-      ipAddress: "",
-      version: "",
-      ownerName: "",
-    });
+
+    createServer({
+
+      name: serverForm.serverName,
+      owner_ign: serverForm.ownerName,
+      minecraft_version: serverForm.version,
+      server_ip: serverForm.ipAddress,
+
+    }).then((server) => {
+
+      console.log(server)
+
+      setServerForm({
+        serverName: "",
+        ipAddress: "",
+        version: "",
+        ownerName: "",
+      });
+
+    }).catch((err) => {
+
+      console.log(err.message)
+
+    })
   };
 
   const copyApiKey = async () => {
@@ -138,7 +152,6 @@ export default function ClientDashboard({ userName }) {
               This form is local-only for now. It stores the data in the dashboard UI until you connect your backend.
             </p>
             <form onSubmit={handleRegisterServer} className="mt-6 grid gap-4 md:grid-cols-2">
-              {/* All your form fields - unchanged */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-zinc-200">Server Name</label>
                 <input
@@ -201,26 +214,28 @@ export default function ClientDashboard({ userName }) {
           {/* Registered Servers List - Exact same */}
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Registered servers</h2>
-            {registeredServers.length === 0 ? (
+            {!servers || servers.length === 0 ? (
               <div className="mt-5 rounded-2xl border border-dashed border-emerald-500/30 bg-white/5 p-6 text-sm text-zinc-300">
                 No servers registered yet. Add your first one above.
               </div>
             ) : (
               <div className="mt-5 space-y-4">
-                {registeredServers.map((server) => (
+                {servers.map((server) => (
                   <div key={server.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-lg font-semibold text-white">{server.serverName}</p>
+                        <p className="text-lg font-semibold text-white">{server.name}</p>
                         <p className="text-sm text-zinc-300">
-                          {server.ipAddress} • {server.version} • Owner: {server.ownerName}
+                          {server.server_ip} • {server.minecraft_version} • Owner: {server.owner_ign}
                         </p>
                       </div>
                       <span className="inline-flex w-fit rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                        {server.status}
+                        {server.is_active ? "Active" : "Not Connected"}
                       </span>
                     </div>
-                    <p className="mt-3 text-xs text-zinc-500">Registered at {server.createdAt}</p>
+                    <p className="mt-3 text-xs text-zinc-500">
+                      Registered at {new Date(server.created_at).toLocaleString()}
+                    </p>
                   </div>
                 ))}
               </div>

@@ -22,6 +22,12 @@ class MinecraftServer(models.Model):
 
     name = models.CharField(max_length=100)
 
+    owner_ign = models.CharField(max_length=20)
+
+    minecraft_version = models.CharField(max_length=20, default="1.20")
+
+    server_ip = models.CharField(max_length=50)
+
     api_key = models.CharField(
         max_length=64,
         unique=True,
@@ -29,7 +35,7 @@ class MinecraftServer(models.Model):
         editable=False
     )
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

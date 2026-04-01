@@ -1,27 +1,11 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
 import ClientDashboard from './ClientDashboard'
 import Image from 'next/image'
-import { useAuth } from "@/app/context/authContext";
-import { useEffect } from "react";
 
 
 
 export default function DashboardPage() {
-
-  const { user, isAuthenticated, loading } = useAuth()
-  const router = useRouter();
-
-  useEffect(() => {
-
-    if (!loading) {
-      if (!isAuthenticated) {
-        router.push("/");
-      }
-    }
-
-  }, [isAuthenticated, loading, router]);
 
   let userName;
 

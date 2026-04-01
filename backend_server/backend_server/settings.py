@@ -23,6 +23,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # True in production (HTTPS)
 CSRF_COOKIE_HTTPONLY = False
 
+APPEND_SLASH=False
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
