@@ -3,8 +3,8 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import {useAuth} from "@/app/context/authContext";
 
 export default function ClientDashboard({ userName }) {
   // All your existing state + logic stays the same
@@ -48,15 +48,6 @@ export default function ClientDashboard({ userName }) {
       [e.target.name]: e.target.value,
     });
   };
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  }; 
 
   const generateApiKey = () => {
     const key =
@@ -120,14 +111,6 @@ export default function ClientDashboard({ userName }) {
           >
             Back Home
           </Link>
-          {/* Most likely wont use this logout button bc it clutters up the dashboard - MOVE TO SIDE BAR */}
-          {/* <button
-            onClick={handleLogout}
-            className="rounded-full border border-rose-500/60 bg-rose-500/10 px-5 py-2.5 text-sm font-medium text-rose-300 hover:bg-rose-500/20 hover:border-rose-400 hover:text-rose-200 hover:cursor-pointer transition-all hover:scale-105 active:scale-95"
-          >
-            Log Out
-          </button> */}
-
         </div>
       </div>
 
@@ -300,7 +283,3 @@ export default function ClientDashboard({ userName }) {
     </>
   );
 }
-
-
-
-

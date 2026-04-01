@@ -1,62 +1,75 @@
 'use client';
-import { Suspense } from 'react';
+
+import {Suspense, useEffect} from 'react';
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
-import handleLogin from '@/utils/auth/handleLogin'
+import {useAuth} from "@/app/context/authContext";
 
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginContent() {
   const [formData, setFormData] = useState({ email: '', password: '', loading: false, error: '', });
-  const router = useRouter();
   const searchParams = useSearchParams();
+
+  const router = useRouter();
+
+  const { user, login } = useAuth();
 
   const message = searchParams.get('message')
 
-// Add after form, before "Don't have account" div:
-{message && (
-  <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-10">
-    Account created! You can now sign in.
-  </div>
-)}
+  // Add after form, before "Don't have account" div:
+  // {message && (
+  //   <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-10">
+  //     Account created! You can now sign in.
+  //   </div>
+  // )}
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormData({ ...formData, loading: true, error: '' });
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      });
+    const accountProp = {
+      email: formData.email,
+      password: formData.password
+    };
 
-      const data = await response.json();
+    // try {
+    //   const response = await fetch('/api/auth/login', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       email: formData.email,
+    //       password: formData.password
+    //     })
+    //   });
+    //
+    //   const data = await response.json();
+    //
+    //   if (response.ok && data.success) {
+    //     router.push('/dashboard');
+    //   } else {
+    //     setFormData({ ...formData, error: data.error || 'Login failed' });
+    //   }
+    // } catch (err) {
+    //   setFormData({ ...formData, error: 'Login failed' });
+    // } finally {
+    //   setFormData({ ...formData, loading: false });
+    // }
 
-      if (response.ok && data.success) {
-        router.push('/dashboard');
-      } else {
-        setFormData({ ...formData, error: data.error || 'Login failed' });
-      }
-    } catch (err) {
-      setFormData({ ...formData, error: 'Login failed' });
-    } finally {
+    login(accountProp).then(() => {
+
+      router.push("/dashboard");
+
+    }).catch((err) => {
+
+      setFormData({ ...formData, error: err.message });
+
+    }).finally(() => {
+
       setFormData({ ...formData, loading: false });
-    }
 
-    handleLogin(formData)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-
+    });
   };
 
   const handleChange = (e) => {
@@ -175,6 +188,26 @@ function LoginContent() {
 
 
 export default function Login() {
+
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+
+    if (!loading) {
+      if (isAuthenticated) {
+        router.push("/dashboard");
+      }
+    }
+
+  }, [isAuthenticated, loading, router]);
+
+  if (isAuthenticated) {
+
+    return null; // or loading spinner
+
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <LoginContent />

@@ -2,31 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useAuth } from "@/app/context/authContext";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [session, setSession] = useState(null);
+
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
   // Fetch session from your /api/auth/session endpoint
-  useEffect(() => {
-    async function fetchSession() {
-      try {
-        const res = await fetch("/api/auth/session", { cache: "no-store" });
-        const data = await res.json();
-        setSession(data.session);
-      } catch (err) {
-        console.error("Session fetch error:", err);
-      }
-    }
-    fetchSession();
-  }, []);
-
-  // Handle logout by clearing the token cookie via backend route
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     try {
+  //       const res = await fetch("/api/auth/session", { cache: "no-store" });
+  //       const data = await res.json();
+  //       setSession(data.session);
+  //     } catch (err) {
+  //       console.error("Session fetch error:", err);
+  //     }
+  //   }
+  //   fetchSession();
+  // }, []);
+  //
+  // // Handle logout by clearing the token cookie via backend route
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setSession(null);
-    window.location.href = "/"; // redirect to home
+    await logout()
+    console.log("Logging Out!!!")
+    router.push("/")
   };
 
   return (
@@ -56,7 +60,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <div className="md:flex hidden items-center gap-3">
-            {session ? (
+            {user ? (
               <>
                 <button
                   onClick={handleLogout}
@@ -102,7 +106,7 @@ export default function Navbar() {
 
       {isMenuOpen && (
         <div className="md:hidden bg-[#22190a] mt-3 border-t border-emerald-500/20 px-6 py-4">
-          {session ? (
+          {user ? (
             <>
               <Link
                 href="/dashboard"
