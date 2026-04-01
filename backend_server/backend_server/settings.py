@@ -21,7 +21,7 @@ LOGOUT_REDIRECT_URL = "/auth/login/"
 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # True in production (HTTPS)
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -80,6 +81,7 @@ WSGI_APPLICATION = 'backend_server.wsgi.application'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:25565",
     "http://127.0.0.1:25565",
+    "http://localhost:3000"
 ]
 
 CSRF_COOKIE_SECURE = False  # or True if using HTTPS

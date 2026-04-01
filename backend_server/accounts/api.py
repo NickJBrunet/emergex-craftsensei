@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
 from ninja.errors import HttpError
@@ -22,16 +23,17 @@ def get_tokens_for_user(user):
 
 
 @router.get("/me", auth=JWTAuth())
+@ensure_csrf_cookie
 def me(request):
     user = request.auth
 
     if not user:
         raise HttpError(401, "Not authenticated")
 
-    return {
+    return JsonResponse({
         "id": user.id,
         "email": user.email,
-    }
+    })
 
 @router.post("/register", response=TokenOut)
 def register(request, data: RegisterIn):
@@ -105,7 +107,7 @@ def login(request, data: LoginIn):
     return response
 
 
-@router.post("/logout")
+@router.post("/logout", auth=JWTAuth())
 def logout(request):
 
     user = request.auth
