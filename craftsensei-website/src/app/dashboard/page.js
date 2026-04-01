@@ -1,18 +1,32 @@
 "use client";
 
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import ClientDashboard from './ClientDashboard'
 import Image from 'next/image'
-import {useAuth} from "@/app/context/authContext";
+import { useAuth } from "@/app/context/authContext";
+import { useEffect } from "react";
 
 
 
 export default function DashboardPage() {
-  const { user } = useAuth()
 
-  if (!user) {
-    redirect('/auth/login')
-  }
+  const { user, isAuthenticated, loading } = useAuth()
+  const router = useRouter();
+
+  useEffect(() => {
+
+    if (!loading) {
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    }
+
+  }, [isAuthenticated, loading, router]);
+
+  let userName;
+
+  try { userName = user.email.split("@")[0] }
+  catch { userName = "" }
 
   return (
     <div className="min-h-screen bg-[#292010] text-zinc-50 relative overflow-hidden">
@@ -29,7 +43,7 @@ export default function DashboardPage() {
       <main className="mx-auto relative z-10">
         <section className="px-6 py-10">
           <div className="mx-auto max-w-7xl">
-            <ClientDashboard userName={user.name} />
+            <ClientDashboard userName={userName} />
           </div>
         </section>
       </main>

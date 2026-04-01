@@ -25,8 +25,6 @@ def get_tokens_for_user(user):
 def me(request):
     user = request.auth
 
-    print("Hello?")
-
     if not user:
         raise HttpError(401, "Not authenticated")
 
@@ -59,6 +57,7 @@ def register(request, data: RegisterIn):
         httponly=True,
         secure=False,
         samesite="Lax",
+        path="/",
     )
 
     return response
@@ -83,7 +82,7 @@ def login(request, data: LoginIn):
 
     response = JsonResponse({"success": True})
 
-    # 🔥 Access token (short-lived)
+    # Access token (short-lived)
     response.set_cookie(
         key="access_token",
         value=tokens["access"],
@@ -93,7 +92,7 @@ def login(request, data: LoginIn):
         path="/",
     )
 
-    # 🔥 Refresh token (optional but recommended)
+    # Refresh token (optional but recommended)
     response.set_cookie(
         key="refresh_token",
         value=tokens["refresh"],
@@ -110,7 +109,16 @@ def login(request, data: LoginIn):
 def logout(request):
     response = JsonResponse({"success": True})
 
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        samesite="Lax",
+    )
+
+    response.delete_cookie(
+        key="refresh_token",
+        path="/",
+        samesite="Lax",
+    )
 
     return response

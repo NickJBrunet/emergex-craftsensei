@@ -57,21 +57,19 @@ function LoginContent() {
     //   setFormData({ ...formData, loading: false });
     // }
 
-    try {
+    login(accountProp).then(() => {
 
-      await login(accountProp);
+      router.push("/dashboard");
 
-      console.log(user)
+    }).catch((err) => {
 
-      router.push("/dashboard")
+      setFormData({ ...formData, error: err.message });
 
-    }
+    }).finally(() => {
 
-    catch (err) {
+      setFormData({ ...formData, loading: false });
 
-      console.error(err.message);
-
-    }
+    });
   };
 
   const handleChange = (e) => {
@@ -191,16 +189,18 @@ function LoginContent() {
 
 export default function Login() {
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
 
-    if (isAuthenticated) {
-      router.push("/dashboard");
+    if (!loading) {
+      if (isAuthenticated) {
+        router.push("/dashboard");
+      }
     }
 
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, loading, router]);
 
   if (isAuthenticated) {
 

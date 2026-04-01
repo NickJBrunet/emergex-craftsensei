@@ -30,12 +30,12 @@ export function AuthProvider({ children }) {
   // Login
   async function login(accountProp) {
     await handleLogin(accountProp); // sets cookie
-    await fetchUser();           // refresh user state
+    await fetchUser();
   }
 
   // Logout
   async function logout() {
-    await handleLogout(); // sets cookie
+    await handleLogout();
     setUser(null);
   }
 

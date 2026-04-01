@@ -1,8 +1,9 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/app/context/authContext";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -15,13 +16,20 @@ export default function DashboardLayout({ children }) {
     { href: "/dashboard/settings", label: "Settings" },
   ];
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout().then(() => {
+
+        console.log("Logging Out!!!");
+        router.push("/");
+
+    }).catch((err) => {
+
+        console.error(err.message);
+
+    });
   };
 
   const handleTouchStart = (e) => {
