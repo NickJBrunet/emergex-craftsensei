@@ -1,9 +1,9 @@
+from django.http import JsonResponse
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
 from ninja.errors import HttpError
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
 User = get_user_model()
@@ -34,7 +34,19 @@ def register(request, data: RegisterIn):
         password=data.password  # hashed automatically
     )
 
-    return get_tokens_for_user(user)
+    tokens = get_tokens_for_user(user)
+
+    response = JsonResponse({"success": True})
+
+    response.set_cookie(
+        key="access_token",
+        value=tokens["access"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+    )
+
+    return response
 
 
 @router.post("/login", response=TokenOut)
@@ -52,4 +64,28 @@ def login(request, data: LoginIn):
     if user is None:
         raise HttpError(403, "Invalid email or password")
 
-    return get_tokens_for_user(user)
+    tokens = get_tokens_for_user(user)
+
+    response = JsonResponse({"success": True})
+
+    # 🔥 Access token (short-lived)
+    response.set_cookie(
+        key="access_token",
+        value=tokens["access"],
+        httponly=True,
+        secure=False,   # True in production (HTTPS)
+        samesite="Lax",
+        path="/",
+    )
+
+    # 🔥 Refresh token (optional but recommended)
+    response.set_cookie(
+        key="refresh_token",
+        value=tokens["refresh"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        path="/",
+    )
+
+    return response

@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
+import handleLogin from '@/utils/auth/handleLogin'
 
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -47,6 +48,15 @@ function LoginContent() {
     } finally {
       setFormData({ ...formData, loading: false });
     }
+
+    handleLogin(formData)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+
   };
 
   const handleChange = (e) => {
