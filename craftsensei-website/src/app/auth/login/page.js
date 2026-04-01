@@ -1,14 +1,53 @@
 'use client';
+import { Suspense } from 'react';
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
 import handleLogin from '@/utils/auth/handleLogin'
 
-export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-  const handleSubmit = (e) => {
+function LoginContent() {
+  const [formData, setFormData] = useState({ email: '', password: '', loading: false, error: '', });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const message = searchParams.get('message')
+
+// Add after form, before "Don't have account" div:
+{message && (
+  <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-10">
+    Account created! You can now sign in.
+  </div>
+)}
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormData({ ...formData, loading: true, error: '' });
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        router.push('/dashboard');
+      } else {
+        setFormData({ ...formData, error: data.error || 'Login failed' });
+      }
+    } catch (err) {
+      setFormData({ ...formData, error: 'Login failed' });
+    } finally {
+      setFormData({ ...formData, loading: false });
+    }
 
     handleLogin(formData)
       .then((res) => {
@@ -102,6 +141,12 @@ export default function Login() {
                 </button>
               </form>
 
+              {message && (
+                <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-4">
+                  Account created! You can now sign in.
+                </div>
+              )}
+
               <div className="mt-8 text-center">
                 <p className="text-zinc-400 text-sm">
                   Don&apos;t have an account?{' '}
@@ -128,4 +173,12 @@ export default function Login() {
   );
 }
 
+
+export default function Login() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
 
