@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   // Check if user is already logged in (cookie exists)
   async function fetchUser() {
     try {
-      const data = await apiRequest("/api/auth/me"); // you must create this endpoint
+      const data = await apiRequest("/auth/me"); // you must create this endpoint
       setUser(data);
     } catch {
       setUser(null);
