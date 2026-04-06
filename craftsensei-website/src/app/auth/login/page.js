@@ -10,20 +10,29 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginContent() {
   const [formData, setFormData] = useState({ email: '', password: '', loading: false, error: '', });
+
+  // Check for ?message=account_created in URL to show success message after signup
   const searchParams = useSearchParams();
+  const messageParam = searchParams.get("message");
 
   const router = useRouter();
 
-  const { user, login } = useAuth();
+  const { login } = useAuth();
 
-  const message = searchParams.get('message')
+  const [message, setMessage] = useState(messageParam);
 
-  // Add after form, before "Don't have account" div:
-  // {message && (
-  //   <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-10">
-  //     Account created! You can now sign in.
-  //   </div>
-  // )}
+  // Show message if redirected from signup with ?message=account_created, then auto-hide after 3 seconds
+  useEffect(() => {
+    if (messageParam) {
+      setMessage(messageParam);
+
+      const timer = setTimeout(() => {
+        setMessage(null);
+      }, 3000); // ⏳ 3 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [messageParam]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,7 +87,6 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen bg-[#292010] text-zinc-50">
-      
       <main className="mx-auto">
         <section className="relative flex min-h-[calc(100vh-56px)] items-center justify-center px-6 py-10">
           <div className="absolute inset-0">
@@ -155,7 +163,7 @@ function LoginContent() {
               </form>
 
               {message && (
-                <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-4">
+                <div className="text-center rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-4">
                   Account created! You can now sign in.
                 </div>
               )}
