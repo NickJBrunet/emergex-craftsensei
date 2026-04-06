@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {useServers} from "@/app/context/serverContext";
-import createUserServer from "@/utils/servers/createUserServer";
+import DeleteServerModal from "@/app/components/DeleteServerModal";
 
 export default function ClientDashboard({ userName }) {
 
-  const { servers, createServer } = useServers()
+  const { servers, createServer, removeServer } = useServers()
 
   // All your existing state + logic stays the same
   const [serverForm, setServerForm] = useState({
@@ -21,6 +21,7 @@ export default function ClientDashboard({ userName }) {
 
   const [generatedApiKey, setGeneratedApiKey] = useState("");
   const [copied, setCopied] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // holds server object to delete
 
   const stats = [
     { label: "Registered Servers", value: (servers?.length || 0).toString() },
@@ -229,9 +230,17 @@ export default function ClientDashboard({ userName }) {
                           {server.server_ip} • {server.minecraft_version} • Owner: {server.owner_ign}
                         </p>
                       </div>
-                      <span className="inline-flex w-fit rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                        {server.is_active ? "Active" : "Not Connected"}
-                      </span>
+                      <div>
+                        <span className="inline-flex w-fit rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
+                          {server.is_active ? "Active" : "Not Connected"}
+                        </span>
+                        <button
+                          onClick={() => setDeleteTarget(server)}
+                          className="rounded-full border border-red-500/40 ml-2 px-3 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:cursor-pointer transition-all"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                     <p className="mt-3 text-xs text-zinc-500">
                       Registered at {new Date(server.created_at).toLocaleString()}
@@ -295,6 +304,14 @@ export default function ClientDashboard({ userName }) {
           </div>
         </div>
       </div>
+      <DeleteServerModal
+        server={deleteTarget}
+        onConfirm={(id) => {
+          removeServer(id);
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }
