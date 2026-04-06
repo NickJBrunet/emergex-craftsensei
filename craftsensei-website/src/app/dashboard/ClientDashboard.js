@@ -17,11 +17,12 @@ export default function ClientDashboard({ userName }) {
     ownerName: "",
   });
 
-  console.log(servers)
-
   const [generatedApiKey, setGeneratedApiKey] = useState("");
   const [copied, setCopied] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null); // holds server object to delete
+
+  const [serverError, setServerError] = useState('');
+  const [serverLoading, setServerLoading] = useState(false);
 
   const stats = [
     { label: "Registered Servers", value: (servers?.length || 0).toString() },
@@ -65,30 +66,33 @@ export default function ClientDashboard({ userName }) {
 
   const handleRegisterServer = (e) => {
     e.preventDefault();
+    setServerError('');
+    setServerLoading(true);
 
     createServer({
-
       name: serverForm.serverName,
       owner_ign: serverForm.ownerName,
       minecraft_version: serverForm.version,
       server_ip: serverForm.ipAddress,
-
-    }).then((server) => {
-
-      console.log(server)
-
-      setServerForm({
-        serverName: "",
-        ipAddress: "",
-        version: "",
-        ownerName: "",
-      });
-
-    }).catch((err) => {
-
-      console.log(err.message)
-
     })
+      .then(() => {
+        setServerForm({ serverName: '', ipAddress: '', version: '', ownerName: '' });
+      })
+      .catch((err) => {
+        console.log(err)
+        if (err.message.includes('401')) {
+          setServerError('You must be logged in to register a server.');
+        } else if (err.message.includes('422')) {
+          setServerError('Invalid server details. Please check all fields and try again.');
+        } else if (err.message.includes('500')) {
+          setServerError('Server error. Please try again later.');
+        } else {
+          setServerError('Failed to register server. Please try again.');
+        }
+      })
+      .finally(() => {
+        setServerLoading(false);
+      });
   };
 
   const copyApiKey = async () => {
@@ -201,12 +205,18 @@ export default function ClientDashboard({ userName }) {
                   className="w-full rounded-xl border border-emerald-500/40 bg-black/70 px-4 py-3 text-zinc-100 outline-none placeholder-zinc-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
                 />
               </div>
-              <div className="md:col-span-2">
+              <div className="md:col-span-2 flex flex-col gap-3">
+                {serverError && (
+                  <div className="rounded-xl bg-red-500/20 border border-red-500/50 px-4 py-3 text-sm text-red-300">
+                    {serverError}
+                  </div>
+                )}
                 <button
                   type="submit"
-                  className="hover:cursor-pointer rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 hover:scale-[1.01] active:scale-95"
+                  disabled={serverLoading}
+                  className="hover:cursor-pointer rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 hover:scale-[1.01] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
                 >
-                  Register Server
+                  {serverLoading ? 'Registering...' : 'Register Server'}
                 </button>
               </div>
             </form>
