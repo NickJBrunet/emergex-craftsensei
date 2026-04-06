@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useAuth } from "@/app/context/authContext";
+import {ServerProvider} from "@/app/context/serverContext";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -22,7 +23,6 @@ export default function DashboardLayout({ children }) {
   const handleLogout = () => {
     logout().then(() => {
 
-        console.log("Logging Out!!!");
         router.push("/");
 
     }).catch((err) => {
@@ -52,6 +52,18 @@ export default function DashboardLayout({ children }) {
   const handleTouchEnd = () => {
     window.touchStartX = null;
   };
+
+  const { isAuthenticated, loading } = useAuth()
+
+  useEffect(() => {
+
+    if (!loading) {
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    }
+
+  }, [isAuthenticated, loading, router]);
 
   return (
     <>
@@ -232,7 +244,11 @@ export default function DashboardLayout({ children }) {
             </header>
 
             <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-              <div className="mx-auto w-full max-w-7xl">{children}</div>
+              <div className="mx-auto w-full max-w-7xl">
+                <ServerProvider>
+                  {children}
+                </ServerProvider>
+              </div>
             </main>
           </div>
         </div>

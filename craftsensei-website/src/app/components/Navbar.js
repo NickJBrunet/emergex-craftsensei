@@ -28,9 +28,17 @@ export default function Navbar() {
   //
   // // Handle logout by clearing the token cookie via backend route
   const handleLogout = async () => {
-    await logout()
-    console.log("Logging Out!!!")
-    router.push("/")
+
+    logout().then(() => {
+
+      router.push("/");
+
+    }).catch((err) => {
+
+      console.error(err.message);
+
+    });
+
   };
 
   return (
