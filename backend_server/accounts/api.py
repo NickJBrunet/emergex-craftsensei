@@ -35,6 +35,49 @@ def me(request):
         "email": user.email,
     })
 
+from rest_framework_simplejwt.exceptions import TokenError  # add to imports
+
+@router.post("/refresh")
+def refresh_token(request):
+    """
+    Validates the refresh_token cookie, rotates both tokens,
+    and sets fresh access_token + refresh_token cookies.
+    """
+    token = request.COOKIES.get("refresh_token")
+
+    if not token:
+        raise HttpError(401, "No refresh token")
+
+    try:
+        refresh = RefreshToken(token)
+        user = User.objects.get(id=refresh["user_id"])
+    except (TokenError, User.DoesNotExist):
+        raise HttpError(401, "Refresh token invalid or expired")
+
+    tokens = get_tokens_for_user(user)
+
+    response = JsonResponse({"success": True})
+
+    response.set_cookie(
+        key="access_token",
+        value=tokens["access"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        path="/",
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=tokens["refresh"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        path="/",
+    )
+
+    return response
+
 @router.post("/register", response=TokenOut)
 def register(request, data: RegisterIn):
     """

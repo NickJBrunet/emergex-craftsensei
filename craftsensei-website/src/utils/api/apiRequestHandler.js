@@ -1,6 +1,7 @@
-import {BACKEND_BASE_URL} from "@/utils/api/config";
+import { BACKEND_BASE_URL } from "@/utils/api/config";
+import handleRefresh from "@/utils/auth/handleRefresh";
 
-export async function apiRequest(endpoint, options = {}) {
+export async function apiRequest(endpoint, options = {}, retry = true) {
   const url = `${BACKEND_BASE_URL}${endpoint}`;
 
   function getCSRFToken() {
@@ -9,7 +10,7 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   const defaultOptions = {
-    credentials: "include", // Allows Next.js to remember cookie and save automatically.
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": getCSRFToken(),
@@ -27,12 +28,20 @@ export async function apiRequest(endpoint, options = {}) {
 
   const res = await fetch(url, config);
 
-  // handle non-2xx responses
+  // On 401, attempt one token refresh then retry the original request
+  if (res.status === 401 && retry) {
+    try {
+      await handleRefresh();                                // get new access_token cookie
+      return apiRequest(endpoint, options, false);    // retry once, no further retries
+    } catch {
+      throw new Error("Session expired. Please log in again.");
+    }
+  }
+
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`API Error ${res.status}: ${errorText}`);
   }
 
-  // auto parse json
   return res.json();
 }

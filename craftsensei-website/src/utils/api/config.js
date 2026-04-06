@@ -5,7 +5,7 @@ const auth_endpoint = "/api/auth"
 export const USER_LOGIN_ENDPOINT = `${auth_endpoint}/login`
 export const USER_LOGOUT_ENDPOINT = `${auth_endpoint}/logout`
 export const USER_CREATE_ENDPOINT = `${auth_endpoint}/register`
-export const USER_VALIDATE_ENDPOINT = `${auth_endpoint}/validate`
+export const USER_REFRESH_ENDPOINT = `${auth_endpoint}/refresh`
 
 // servers
 const servers_endpoint = "/api/servers"
