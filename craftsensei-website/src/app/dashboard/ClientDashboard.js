@@ -251,7 +251,7 @@ export default function ClientDashboard({ userName }) {
             <p className="mt-2 text-sm text-zinc-300">
               This is generated locally for now. Later you can replace this with a backend-issued key.
             </p>
-            <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-zinc-950 p-4 font-mono text-sm text-emerald-200 break-all">
+            <div className="mt-5 h-18 rounded-2xl border border-emerald-500/20 bg-zinc-950 p-4 font-mono text-sm text-emerald-200 break-all">
               {generatedApiKey || "No API key generated yet."}
             </div>
             <div className="mt-4 flex flex-wrap gap-3">

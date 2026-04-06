@@ -13,13 +13,13 @@ export default function DashboardPage() {
   catch { userName = "" }
 
   return (
-    <div className="min-h-screen bg-[#292010] text-zinc-50 relative overflow-hidden">
+    <div className="fix min-h-screen bg-[#292010] text-zinc-50 relative overflow-hidden">
       <Image
+      className="fixed inset-0 z-10 opacity-30 object-cover"
         src="/backgrounds/minecraft_bg4.png"
         alt="Dashboard background"
         fill
         sizes="100vw"
-        className="object-cover"
         priority
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/45" />

@@ -74,10 +74,10 @@ export default function DashboardLayout({ children }) {
         />
       )}
 
-      <div className="min-h-screen bg-[#0b0f0c] text-zinc-50">
+      <div className="stick min-h-screen bg-[#0b0f0c] text-zinc-50 z-10 ">
         <div className="flex min-h-screen">
           {/* Desktop Sidebar - always visible */}
-          <aside className="hidden w-72 shrink-0 border-r border-emerald-500/20 bg-black/70 px-5 py-6 backdrop-blur-xl lg:flex lg:flex-col">
+          <aside className="hidden lg:flex lg:flex-col w-72 h-screen sticky top-0 shrink-0 border-r border-emerald-500/20 bg-black/70 px-5 py-6 backdrop-blur-xl">
             <div className="mb-8">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">
                 Craft Sensei
