@@ -15,6 +15,8 @@ public final class CraftyBot extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerMessageEvent(handler,this),this);
 
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Heartbeat(), 0L, 600L);
+
         getLogger().info("Plugin Enabled!");
 
         instance = this;

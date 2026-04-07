@@ -15,5 +15,5 @@ export const SERVER_LIST_ENDPOINT = `${servers_endpoint}/`
 export const SERVER_GET_ENDPOINT = (id) => `${servers_endpoint}/${id}`
 export const SERVER_UPDATE_ENDPOINT = (id) => `${servers_endpoint}/${id}`
 export const SERVER_DELETE_ENDPOINT = (id) => `${servers_endpoint}/${id}`
-
+export const SERVER_PING_ENDPOINT = (id) => `${servers_endpoint}/${id}/ping`
 export const SERVER_ROTATE_KEY_ENDPOINT = (id) => `${servers_endpoint}/${id}/rotate-key/`

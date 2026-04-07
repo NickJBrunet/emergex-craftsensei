@@ -40,6 +40,8 @@ class MinecraftServer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    last_seen = models.DateTimeField(null=True, blank=True)
+
     def rotate_api_key(self):
         self.api_key = secrets.token_hex(32)
         self.save(update_fields=["api_key", "updated_at"])

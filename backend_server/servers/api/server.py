@@ -1,8 +1,11 @@
+import datetime
+
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
 
 from accounts.auth import JWTAuth
+from servers.auth import ServerAPIKeyAuth
 from servers.models import MinecraftServer
 from servers.schemas import (
     ServerCreateIn,
@@ -128,3 +131,48 @@ def delete_server(request, server_id: UUID):
         raise HttpError(404, "Server not found")
 
     return {"success": True}
+
+@router.get("{server_id}/ping", auth=JWTAuth())
+def ping_server(request, server_id: UUID):
+    """
+    Returns whether the server is actively connected.
+    A server is considered live if it's active and has communicated within the last 60 seconds.
+    """
+    if not request.auth:
+        raise HttpError(401, "Unauthorized")
+
+    try:
+        server = MinecraftServer.objects.get(
+            id=server_id,
+            owner=request.auth
+        )
+    except MinecraftServer.DoesNotExist:
+        raise HttpError(404, "Server not found")
+
+    threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=60)
+    is_connected = server.is_active and server.updated_at >= threshold
+
+    return {
+        "connected": is_connected,
+        "last_seen": server.updated_at,
+        "is_active": server.is_active,
+    }
+
+import datetime
+
+@router.post("{server_id}/heartbeat", auth=ServerAPIKeyAuth())
+def heartbeat(request, server_id: UUID):
+    """
+    Called periodically by the plugin to signal it's alive.
+    Uses X-API-Key auth, same as the chat endpoint.
+    """
+    server = request.server  # attached by ServerAPIKeyAuth
+
+    if str(server.id) != str(server_id):
+        raise HttpError(403, "Forbidden")
+
+    server.last_seen = datetime.datetime.now(datetime.timezone.utc)
+    server.is_active = True
+    server.save(update_fields=["last_seen", "is_active", "updated_at"])
+
+    return {"ok": True}
