@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   // Check if user is already logged in (cookie exists)
   async function fetchUser() {
     try {
-      const data = await apiRequest("/auth/me"); // you must create this endpoint
+      const data = await apiRequest("/api/auth/me");
       setUser(data);
     } catch {
       setUser(null);
@@ -29,12 +29,13 @@ export function AuthProvider({ children }) {
 
   // Login
   async function login(accountProp) {
-    await handleLogin(accountProp); // sets cookie
+    await handleLogin(accountProp);
     await fetchUser();
   }
 
   // Logout
   async function logout() {
+    await fetchUser();
     await handleLogout();
     setUser(null);
   }

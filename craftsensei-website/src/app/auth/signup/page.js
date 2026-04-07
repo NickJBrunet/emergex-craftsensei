@@ -1,10 +1,14 @@
 'use client';
 import Image from "next/image";
 import Link from 'next/link';
-import { useState } from 'react';
-import createUserAccount from "@/utils/auth/createUserAccount";
 import { useRouter } from 'next/navigation';
-import {useAuth} from "@/app/context/authContext";
+import { useState } from 'react';
+
+// Function for creating user account, will call API route which will handle DB logic and validation.
+import createUserAccount from "@/utils/auth/createUserAccount";
+
+
+
 
 export default function Signup() {
   const router = useRouter();
@@ -18,12 +22,25 @@ export default function Signup() {
     error: '',
   });
 
+  // Simple Loading Dots Component for better UX during async operations.
+  const LoadingDots = () => {
+    return (
+      <span className="inline-flex">
+        <span className="animate-bounce">.</span>
+        <span className="animate-bounce [animation-delay:0.2s]">.</span>
+        <span className="animate-bounce [animation-delay:0.4s]">.</span>
+      </span>
+    );
+}
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setFormData({ ...formData, error: 'Passwords do not match' });
       return;
     }
+    //set loading state and clear previous errors before API call
+    setFormData({ ...formData, loading: true, error: '' });
 
     // try {
     //   setFormData({ ...formData, loading: true, error: '' });
@@ -54,19 +71,19 @@ export default function Signup() {
     createUserAccount({email: formData.email, password: formData.password})
       .then((res) => {
 
-        console.log(res);
+        console.log(res); 
 
-        // Handle Dashboard Re-direct Here.
-        router.push('/dashboard');
+        // On success, redirect to login page with success message.
+        setFormData({ ...formData, error: '' });
+        router.push('/auth/login?message=account_created');
       })
       .catch((err) => {
-
         // Handle Error UI Here.
-
+        setFormData({ ...formData, error: 'Signup failed' });
         console.error(err.message);
+      }).finally(() => {
+        setFormData({ ...formData, loading: false });
       });
-
-
   };
 
   const handleChange = (e) => {
@@ -75,7 +92,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-[#292010] text-zinc-50">
-      
       <main className="mx-auto">
         <section className="relative flex min-h-[calc(100vh-56px)] items-center justify-center px-6 py-10">
           <div className="absolute inset-0">
@@ -179,8 +195,14 @@ export default function Signup() {
                   type="submit"
                   disabled={formData.loading}
                   className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-emerald-950 shadow-lg hover:scale-105 active:scale-95 transition-all hover:cursor-pointer hover:bg-black hover:text-white hover:border-emerald-500/50 hover:border-2 max-h-14"
-                >
-                  {formData.loading ? "Creating..." : "Create Account"}
+                >   
+                  {formData.loading ? (
+                    <>
+                      Creating <LoadingDots />
+                    </>
+                  ) : (
+                    "Create Account" 
+                  )}
                 </button>
 
                 {formData.error && (
@@ -194,7 +216,7 @@ export default function Signup() {
                 <p className="text-zinc-400 text-sm">
                   Already have an account?{' '}
                   <Link href="/auth/login" className="text-emerald-300 hover:text-emerald-200 font-semibold hover:underline transition-colors">
-                    Sign in
+                    Sign in                
                   </Link>
                 </p>
               </div>

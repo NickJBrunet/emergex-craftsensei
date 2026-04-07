@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useAuth } from "@/app/context/authContext";
+import {ServerProvider} from "@/app/context/serverContext";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -22,7 +23,6 @@ export default function DashboardLayout({ children }) {
   const handleLogout = () => {
     logout().then(() => {
 
-        console.log("Logging Out!!!");
         router.push("/");
 
     }).catch((err) => {
@@ -53,6 +53,18 @@ export default function DashboardLayout({ children }) {
     window.touchStartX = null;
   };
 
+  const { isAuthenticated, loading } = useAuth()
+
+  useEffect(() => {
+
+    if (!loading) {
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    }
+
+  }, [isAuthenticated, loading, router]);
+
   return (
     <>
       {isMobileSidebarOpen && (
@@ -62,10 +74,10 @@ export default function DashboardLayout({ children }) {
         />
       )}
 
-      <div className="min-h-screen bg-[#0b0f0c] text-zinc-50">
+      <div className="stick min-h-screen bg-[#0b0f0c] text-zinc-50 z-10 ">
         <div className="flex min-h-screen">
           {/* Desktop Sidebar - always visible */}
-          <aside className="hidden w-72 shrink-0 border-r border-emerald-500/20 bg-black/70 px-5 py-6 backdrop-blur-xl lg:flex lg:flex-col">
+          <aside className="hidden lg:flex lg:flex-col w-72 h-screen sticky top-0 shrink-0 border-r border-emerald-500/20 bg-black/70 px-5 py-6 backdrop-blur-xl">
             <div className="mb-8">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">
                 Craft Sensei
@@ -232,7 +244,11 @@ export default function DashboardLayout({ children }) {
             </header>
 
             <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-              <div className="mx-auto w-full max-w-7xl">{children}</div>
+              <div className="mx-auto w-full max-w-7xl">
+                <ServerProvider>
+                  {children}
+                </ServerProvider>
+              </div>
             </main>
           </div>
         </div>
