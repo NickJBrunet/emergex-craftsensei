@@ -90,7 +90,7 @@ export default function Home() {
               <p className="inline-flex rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-emerald-200 [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
                 AI companion for Minecraft
               </p>
-              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl [text-shadow:0_4px_8px_rgba(0,0,0,0.4)]">
+              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl sm:[text-shadow:0_4px_8px_rgba(0,0,0,0.4)]">
                 Chat with your world, not just your friends.
               </h1>
               <p className="text-base text-zinc-200 sm:text-lg [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">

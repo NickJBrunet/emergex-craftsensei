@@ -111,7 +111,7 @@ export default function ServersPage() {
           <div className="md:col-span-2">
             <button
               type="submit"
-              className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 hover:scale-[1.02] active:scale-95 transition-all"
+              className="hover:cursor-pointer rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 hover:scale-[1.02] active:scale-95 transition-all"
             >
               Register Server
             </button>

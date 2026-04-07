@@ -12,6 +12,15 @@ export default function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
 
+  const [ clickCounter, setClickCounter ] = useState(0);
+  const [ logoImage, setLogoImage ] = useState(0);
+  const [ title, setTitle ] = useState("Craft Sensei");
+
+  const logos = [
+    "/minecraft_logo.svg",
+    "/crafty.svg",
+  ];
+
   // Fetch session from your /api/auth/session endpoint
   // useEffect(() => {
   //   async function fetchSession() {
@@ -41,28 +50,48 @@ export default function Navbar() {
 
   };
 
+
+  const handleLogoClick = () => {
+    setClickCounter((prev) => {
+      const newCount = prev + 1;
+      
+      if (newCount === 31) {
+        setLogoImage(1);
+        setTitle("Crafty Sensei!!!");
+      } 
+      // else if (newCount === 36) {
+      //   setLogoImage(0);
+      //   return 0;
+      // }
+      
+      return newCount;
+    });
+  };
+
   return (
     <header className="sticky top-0 z-30 bg-[#22190a] px-6 py-3 shadow-md">
       <nav className="mx-auto gap-5 flex px-1 sm:px-10 items-center justify-between">
         <div className="flex items-center gap-3 sm:gap-5">
           <div className="relative h-10 w-10">
             <Image
-              src="/minecraft_logo.svg"
+              src={logos[logoImage]}
               alt="Craft Sensei Logo"
+              onClick={handleLogoClick}
               fill
+              draggable="false"
               sizes="32px"
-              className="rounded-sm object-contain hover:animate-spin hover:cursor-pointer active:scale-80"
+              className={logoImage === 1 ? `transition-all duration-300 active:animate-spin hover:cursor-grab rounded-sm object-contain active:scale-80 scale-125` : `rounded-sm object-contain hover:animate-spin hover:cursor-pointer active:scale-80`}
             />
           </div>
 
           <Link
             href="/"
-            onClick={() =>
+            onClick={() => {
               window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
-            }
+            }}
             className="text-2xl md:text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 flex items-center pb-1"
           >
-            Craft Sensei
+            {title}
           </Link>
         </div>
 

@@ -1,16 +1,10 @@
-"use client";
+
 
 import ClientDashboard from './ClientDashboard'
 import Image from 'next/image'
 
 
-
-export default function DashboardPage() {
-
-  let userName;
-
-  try { userName = user.email.split("@")[0] }
-  catch { userName = "" }
+export default async function DashboardPage() {
 
   return (
     <div className="fix min-h-screen bg-[#292010] text-zinc-50 relative overflow-hidden">
@@ -27,7 +21,7 @@ export default function DashboardPage() {
       <main className="mx-auto relative z-10">
         <section className="px-6 py-10">
           <div className="mx-auto max-w-7xl">
-            <ClientDashboard userName={userName} />
+            <ClientDashboard />
           </div>
         </section>
       </main>

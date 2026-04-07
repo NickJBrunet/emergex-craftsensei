@@ -4,8 +4,14 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {useServers} from "@/app/context/serverContext";
 import DeleteServerModal from "@/app/components/DeleteServerModal";
+import { useAuth } from "@/app/context/authContext";
 
-export default function ClientDashboard({ userName }) {
+export default function ClientDashboard() {
+
+  const { user } = useAuth();
+  const displayName = user?.displayName || 
+                     user?.email?.split('@')[0] || 
+                     'Minecraft User';
 
   const { servers, createServer, removeServer } = useServers()
 
@@ -102,11 +108,8 @@ export default function ClientDashboard({ userName }) {
     <>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="inline-flex rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
-            Logged in dashboard
-          </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Welcome back, {userName}!
+            Welcome back, {displayName}!
           </h1>
           <p className="mt-3 max-w-2xl text-zinc-200">
             Register your Minecraft server, generate an API key, and prepare your Craft Sensei setup.
@@ -149,9 +152,6 @@ export default function ClientDashboard({ userName }) {
           {/* Server Registration Form - Exact same */}
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Register your server</h2>
-            <p className="mt-2 text-sm text-zinc-300">
-              This form is local-only for now. It stores the data in the dashboard UI until we connect it with the backend.
-            </p>
             <form onSubmit={handleRegisterServer} className="mt-6 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-zinc-200">Server Name</label>
@@ -255,9 +255,6 @@ export default function ClientDashboard({ userName }) {
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">API Key</p>
             <h2 className="mt-2 text-2xl font-semibold text-white">Your server key</h2>
-            <p className="mt-2 text-sm text-zinc-300">
-              *This is generated locally for now. Later it will be replaced with a backend-issued key.
-            </p>
             <div className="mt-5 h-18 rounded-2xl border border-emerald-500/20 bg-zinc-950 p-4 font-mono text-sm text-emerald-200 break-all">
               {generatedApiKey || "No API key generated yet."}
             </div>
@@ -289,16 +286,6 @@ export default function ClientDashboard({ userName }) {
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
-            <p className="text-sm font-semibold text-white">Next steps</p>
-            <ul className="mt-4 space-y-3 text-sm text-zinc-300">
-              <li>• Connect this dashboard form to backend API.</li>
-              <li>• Save server registrations per user account.</li>
-              <li>• Generate persistent API keys server-side.</li>
-              <li>• Add a revoke/reset key option.</li>
-            </ul>
           </div>
         </div>
       </div>

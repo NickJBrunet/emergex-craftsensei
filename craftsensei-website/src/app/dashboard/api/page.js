@@ -81,7 +81,7 @@ export default function ApiKeysPage() {
       <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
         <h2 className="text-2xl font-semibold text-white mb-4">Your API key</h2>
         <p className="text-sm text-zinc-300 mb-5">
-          Use this key to authenticate your Minecraft server or bots with Craft Sensei (demo only).
+          Use this key to authenticate your Minecraft server or bots with Craft Sensei.
         </p>
 
         <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-zinc-950 p-4 font-mono text-sm text-emerald-200 break-all">
@@ -92,7 +92,7 @@ export default function ApiKeysPage() {
           <button
             onClick={generateApiKey}
             disabled={!!apiKey}
-            className="rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="hover:cursor-pointer rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-emerald-950 hover:bg-emerald-400 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {apiKey ? 'API key already exists' : 'Generate API Key'}
           </button>
@@ -100,7 +100,7 @@ export default function ApiKeysPage() {
           <button
             onClick={regenerateApiKey}
             disabled={!apiKey}
-            className="rounded-full border border-emerald-300 px-5 py-2.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:cursor-pointer rounded-full border border-emerald-300 px-5 py-2.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Regenerate
           </button>
@@ -158,23 +158,6 @@ export default function ApiKeysPage() {
         )}
       </div>
 
-      <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
-        <p className="text-sm font-semibold text-white">Next steps</p>
-        <ul className="mt-4 space-y-3 text-sm text-zinc-300">
-          <li>
-            • Connect this page to the backend to persist keys per user and track usage.
-          </li>
-          <li>
-            • Add “revoke key” functionality and per‑key usage limits.
-          </li>
-          <li>
-            • Expose usage stats such as requests/day or errors over time.
-          </li>
-          <li>
-            • Replace the local key history with a server‑side audit log.
-          </li>
-        </ul>
-      </div>
     </div>
   );
 }
