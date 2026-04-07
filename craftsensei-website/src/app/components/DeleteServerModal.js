@@ -30,3 +30,5 @@ export default function DeleteServerModal({ server, onConfirm, onCancel }) {
     </div>
   );
 }
+
+

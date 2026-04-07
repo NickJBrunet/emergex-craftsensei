@@ -14,22 +14,21 @@ export default function DashboardLayout({ children }) {
     { href: "/dashboard", label: "Overview" },
     { href: "/dashboard/servers", label: "Servers" },
     { href: "/dashboard/api", label: "API Keys" },
+    { href: "/dashboard/history", label: "Chat History" },
     { href: "/dashboard/settings", label: "Settings" },
   ];
 
   const { logout } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout().then(() => {
-
-        router.push("/");
-
-    }).catch((err) => {
-
-        console.error(err.message);
-
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      router.push("/");
+    }
   };
 
   const handleTouchStart = (e) => {
@@ -121,7 +120,7 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Local demo mode</p>
+              <p className="text-xs text-zinc-400">Dashboard</p>
 
               <button
                 onClick={handleLogout}
@@ -187,7 +186,7 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Local demo mode</p>
+              <p className="text-xs text-zinc-400">Dashboard</p>
 
               <button
                 onClick={handleLogout}
@@ -231,7 +230,7 @@ export default function DashboardLayout({ children }) {
 
                 <div className="flex items-center gap-3">
                   <span className="hidden rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200 sm:inline-flex">
-                    Local demo
+                    Dashboard
                   </span>
                   <Link
                     href="/dashboard/settings"

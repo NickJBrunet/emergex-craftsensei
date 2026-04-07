@@ -40,6 +40,26 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  // Temporary logout for front end
+// async function logout() {
+//   // Clear local state immediately
+//   setUser(null);
+  
+//   // Clear cookies client-side
+//   document.cookie = 'auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+//   document.cookie = 'csrf-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  
+//   // Optional: call API if needed
+//   try {
+//     await fetch('/api/auth/logout', { 
+//       method: 'POST', 
+//       credentials: 'include' 
+//     });
+//   } catch (e) {
+//     // Ignore API errors - local clearout is enough
+//   }
+// }
+
   return (
     <AuthContext.Provider
       value={{

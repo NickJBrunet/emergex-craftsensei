@@ -27,6 +27,8 @@ def get_tokens_for_user(user):
 def me(request):
     user = request.auth
 
+    print("COOKIES:", request.COOKIES)
+
     if not user:
         raise HttpError(401, "Not authenticated")
 
@@ -37,16 +39,12 @@ def me(request):
 
 @router.post("/register", response=TokenOut)
 def register(request, data: RegisterIn):
-    """
-    Create a new user with secure hashed password.
-    Stored in PostgreSQL (accounts_user table).
-    """
     if User.objects.filter(email=data.email).exists():
         raise HttpError(403, "Email already registered")
 
     user = User.objects.create_user(
         email=data.email,
-        password=data.password  # hashed automatically
+        password=data.password
     )
 
     tokens = get_tokens_for_user(user)
@@ -84,17 +82,17 @@ def login(request, data: LoginIn):
 
     response = JsonResponse({"success": True})
 
+
     # Access token (short-lived)
     response.set_cookie(
         key="access_token",
         value=tokens["access"],
         httponly=True,
-        secure=False,   # True in production (HTTPS)
+        secure=False,
         samesite="Lax",
         path="/",
     )
 
-    # Refresh token (optional but recommended)
     response.set_cookie(
         key="refresh_token",
         value=tokens["refresh"],
@@ -130,3 +128,5 @@ def logout(request):
     )
 
     return response
+
+

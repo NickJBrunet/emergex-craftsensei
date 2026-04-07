@@ -8,7 +8,15 @@ import { useState } from 'react';
 import createUserAccount from "@/utils/auth/createUserAccount";
 
 
-
+const LoadingDots = () => {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span className="animate-bounce w-2 h-2">.</span>
+      <span className="animate-bounce [animation-delay:0.2s] w-2 h-2">.</span>
+      <span className="animate-bounce [animation-delay:0.4s] w-2 h-2">.</span>
+    </span>
+  );
+};
 
 export default function Signup() {
   const router = useRouter();
@@ -22,16 +30,6 @@ export default function Signup() {
     error: '',
   });
 
-  // Simple Loading Dots Component for better UX during async operations.
-  const LoadingDots = () => {
-    return (
-      <span className="inline-flex">
-        <span className="animate-bounce">.</span>
-        <span className="animate-bounce [animation-delay:0.2s]">.</span>
-        <span className="animate-bounce [animation-delay:0.4s]">.</span>
-      </span>
-    );
-}
 
   const handleSubmit = async (e) => {
     e.preventDefault();
