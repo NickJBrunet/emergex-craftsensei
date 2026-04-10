@@ -24,10 +24,6 @@ class MinecraftServer(models.Model):
 
     owner_ign = models.CharField(max_length=20)
 
-    minecraft_version = models.CharField(max_length=20, default="1.20")
-
-    server_ip = models.CharField(max_length=50)
-
     api_key = models.CharField(
         max_length=64,
         unique=True,
@@ -41,6 +37,8 @@ class MinecraftServer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     last_seen = models.DateTimeField(null=True, blank=True)
+
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
 
     def rotate_api_key(self):
         self.api_key = secrets.token_hex(32)

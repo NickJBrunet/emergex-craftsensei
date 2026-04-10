@@ -6,13 +6,14 @@ from uuid import UUID
 
 from accounts.auth import JWTAuth
 from servers.auth import ServerAPIKeyAuth
-from servers.models import MinecraftServer
+from servers.models import MinecraftServer, ChatLog
 from servers.schemas import (
     ServerCreateIn,
     ServerUpdateIn,
     ServerOut,
-    ServerWithKeyOut,
+    ServerWithKeyOut, ChatIn,
 )
+from servers.services import generate_bot_response
 
 router = Router()
 
@@ -29,7 +30,6 @@ def create_server(request, payload: ServerCreateIn):
         owner=request.auth,
         name=payload.name,
         owner_ign=payload.owner_ign,
-        minecraft_version=payload.minecraft_version,
     )
     return server
 
@@ -83,12 +83,6 @@ def update_server(request, server_id: UUID, payload: ServerUpdateIn):
 
     if payload.is_active is not None:
         server.is_active = payload.is_active
-
-    if payload.minecraft_version is not None:   # ✅ added
-        server.minecraft_version = payload.minecraft_version
-
-    if payload.owner_ign is not None:           # ✅ added
-        server.owner_ign = payload.owner_ign
 
     server.save()
     return server
@@ -176,3 +170,42 @@ def heartbeat(request, server_id: UUID):
     server.save(update_fields=["last_seen", "is_active", "updated_at"])
 
     return {"ok": True}
+
+@router.post("{server_id}/chat", auth=ServerAPIKeyAuth())
+def bot_chat(request, server_id: UUID, data: ChatIn):
+    """
+    Core endpoint for Crafty AI bot interaction.
+    Can be used by:
+    - Minecraft plugin
+    - Dashboard
+    - External tools
+
+    POST localhost:8000/api/server/{server_id}/chat
+    """
+
+    server = request.server      # the minecraft server
+    owner = request.user         # dashboard user (owner)
+
+    if str(server.id) != str(server_id):
+        raise HttpError(403, "Forbidden")
+
+    start_time = datetime.time()
+
+    try:
+        bot_reply = generate_bot_response(data.message)
+        success = True
+        error_message = None
+    except Exception as e:
+        bot_reply = ""
+        success = False
+
+    ChatLog.objects.create(
+        server=request.server,
+        user=request.user,
+        player_uuid=data.player_uuid,
+        player_username=data.player_username,
+        player_message=data.message,
+        bot_message=bot_reply,
+        success=success
+    )
+    return {"response": bot_reply}

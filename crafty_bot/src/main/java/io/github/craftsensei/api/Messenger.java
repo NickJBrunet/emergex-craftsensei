@@ -21,24 +21,12 @@ import io.github.craftsensei.CraftyBot;
 public class Messenger {
     // called from BasicChatMessageHandler
     public CompletableFuture<String> sendToDjango(Player player, String message) {
-        Yaml yaml = new Yaml();
-        String baseUrl = "";
-        String apiKey = "";
+        String baseUrl = CraftyBot.getInstance().getConfig().getString("craft-api-base-url");
+        String apiKey = CraftyBot.getInstance().getConfig().getString("craft-api-key");
+        String serverId = CraftyBot.getInstance().getConfig().getString("craft-server-id");
 
-        // Load the YAML file from the resources folder
-        try (InputStream inputStream = Messenger.class.getClassLoader().getResourceAsStream("config.yml")) {
-            if (inputStream == null) {
-                System.err.println("YAML file not found in resources folder!");
-            }
-            // Parse the YAML file into a Map
-            Map<String, Object> data = yaml.load(inputStream);
-
-            // Access values by keys
-            baseUrl = (String) data.get("craft-api-base-url");
-            apiKey = (String) data.get("craft-api-key");
-
-        } catch (Exception e) {
-            return CompletableFuture.failedFuture(e);
+        if (baseUrl == null || apiKey == null || serverId == null) {
+            throw new IllegalStateException("Config values missing!");
         }
 
         try {
@@ -55,7 +43,7 @@ public class Messenger {
 
             // create request
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + "/api/chat/chat"))
+                    .uri(URI.create(baseUrl + "/api/servers/" + serverId + "/chat"))
                     .header("Content-Type", "application/json")
                     .header("X-API-Key", apiKey)
                     .POST(HttpRequest.BodyPublishers.ofString(json))

@@ -8,27 +8,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
+import io.github.craftsensei.CraftyBot;
+
 public class Heartbeat implements Runnable {
 
     @Override
     public void run() {
-        Yaml yaml = new Yaml();
-        String baseUrl = "";
-        String apiKey = "";
-        String serverId = "";
-
-        try (InputStream inputStream = Heartbeat.class.getClassLoader().getResourceAsStream("config.yml")) {
-            if (inputStream == null) return;
-            Map<String, Object> data = yaml.load(inputStream);
-            baseUrl   = (String) data.get("craft-api-base-url");
-            apiKey    = (String) data.get("craft-api-key");
-            serverId  = (String) data.get("craft-server-id");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
         try {
+            String baseUrl = CraftyBot.getInstance().getConfig().getString("craft-api-base-url");
+            String apiKey = CraftyBot.getInstance().getConfig().getString("craft-api-key");
+            String serverId = CraftyBot.getInstance().getConfig().getString("craft-server-id");
+
+            if (baseUrl == null || apiKey == null || serverId == null) {
+                throw new IllegalStateException("Config values missing!");
+            }
+
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl + "/api/servers/" + serverId + "/heartbeat"))
@@ -39,6 +33,7 @@ public class Heartbeat implements Runnable {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             CraftyBot.getInstance().getLogger().info("Heartbeat: " + response.statusCode());
+
         } catch (Exception e) {
             CraftyBot.getInstance().getLogger().warning("Heartbeat failed: " + e.getMessage());
         }

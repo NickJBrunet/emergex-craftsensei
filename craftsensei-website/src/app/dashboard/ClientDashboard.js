@@ -16,7 +16,7 @@ function ServerCard({ server, onView, onDelete }) {
                 <div>
                     <p className="text-lg font-semibold text-white">{server.name}</p>
                     <p className="text-sm text-zinc-300">
-                        {server.server_ip} • {server.minecraft_version} • Owner: {server.owner_ign}
+                        Owner: {server.owner_ign}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -54,8 +54,6 @@ export default function ClientDashboard({ userName }) {
   // All your existing state + logic stays the same
   const [serverForm, setServerForm] = useState({
     serverName: "",
-    ipAddress: "",
-    version: "",
     ownerName: "",
   });
 
@@ -71,25 +69,25 @@ export default function ClientDashboard({ userName }) {
   const stats = [
     { label: "Registered Servers", value: (servers?.length || 0).toString() },
     { label: "API Keys", value: generatedApiKey ? "1" : "0" },
-    { label: "Active Chat Sessions", value: "0" },
-    { label: "Uptime", value: "99.9%" },
+    // { label: "Active Chat Sessions", value: "0" },
+    { label: "Uptime", value: "85%" },
   ];
 
-  const recentActivity = useMemo(
-    () => [
-      {
-        title: "Dashboard created",
-        desc: "Your account is ready to register a Minecraft server.",
-        time: "Just now",
-      },
-      {
-        title: "API key generated",
-        desc: "Use this key later when backend integration is added.",
-        time: "Just now",
-      },
-    ],
-    []
-  );
+  // const recentActivity = useMemo(
+  //   () => [
+  //     {
+  //       title: "Dashboard created",
+  //       desc: "Your account is ready to register a Minecraft server.",
+  //       time: "Just now",
+  //     },
+  //     {
+  //       title: "API key generated",
+  //       desc: "Use this key later when backend integration is added.",
+  //       time: "Just now",
+  //     },
+  //   ],
+  //   []
+  // );
 
   const handleChange = (e) => {
     setServerForm({
@@ -116,11 +114,11 @@ export default function ClientDashboard({ userName }) {
     createServer({
       name: serverForm.serverName,
       owner_ign: serverForm.ownerName,
-      minecraft_version: serverForm.version,
-      server_ip: serverForm.ipAddress,
+      // minecraft_version: serverForm.version,
+      // server_ip: serverForm.ipAddress,
     })
       .then(() => {
-        setServerForm({ serverName: '', ipAddress: '', version: '', ownerName: '' });
+        setServerForm({ serverName: '', ownerName: '' });
       })
       .catch((err) => {
         console.log(err)
@@ -162,12 +160,6 @@ export default function ClientDashboard({ userName }) {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <button
-            onClick={generateApiKey}
-            className="rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400 hover:cursor-pointer hover:scale-105 active:scale-95"
-          >
-            Generate API Key
-          </button>
           <Link
             href="/"
             className="rounded-full border border-zinc-500 bg-black/30 px-5 py-2.5 text-sm font-medium text-zinc-100 hover:bg-white/5"
@@ -210,30 +202,6 @@ export default function ClientDashboard({ userName }) {
                   onChange={handleChange}
                   required
                   placeholder="My Survival Realm"
-                  className="w-full rounded-xl border border-emerald-500/40 bg-black/70 px-4 py-3 text-zinc-100 outline-none placeholder-zinc-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-zinc-200">Server IP / Domain</label>
-                <input
-                  type="text"
-                  name="ipAddress"
-                  value={serverForm.ipAddress}
-                  onChange={handleChange}
-                  required
-                  placeholder="play.example.com"
-                  className="w-full rounded-xl border border-emerald-500/40 bg-black/70 px-4 py-3 text-zinc-100 outline-none placeholder-zinc-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-zinc-200">Minecraft Version</label>
-                <input
-                  type="text"
-                  name="version"
-                  value={serverForm.version}
-                  onChange={handleChange}
-                  required
-                  placeholder="1.21.1"
                   className="w-full rounded-xl border border-emerald-500/40 bg-black/70 px-4 py-3 text-zinc-100 outline-none placeholder-zinc-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
                 />
               </div>

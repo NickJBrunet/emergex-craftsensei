@@ -121,7 +121,6 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Local demo mode</p>
 
               <button
                 onClick={handleLogout}
@@ -187,7 +186,6 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Local demo mode</p>
 
               <button
                 onClick={handleLogout}
@@ -230,9 +228,6 @@ export default function DashboardLayout({ children }) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="hidden rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200 sm:inline-flex">
-                    Local demo
-                  </span>
                   <Link
                     href="/dashboard/settings"
                     className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 hover:bg-emerald-400"

@@ -1,9 +1,11 @@
 package io.github.craftsensei;
 
-import io.github.craftsensei.handlers.BasicChatMessageHandler;
-import io.github.craftsensei.handlers.ChatMessageHandler;
-import io.github.craftsensei.listeners.PlayerMessageEvent;
+import io.github.craftsensei.handlers.*;
+import io.github.craftsensei.listeners.*;
+import io.github.craftsensei.api.*;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import org.bukkit.Bukkit;
 
 public final class CraftyBot extends JavaPlugin {
 
@@ -11,6 +13,8 @@ public final class CraftyBot extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig(); // Saves Default Config During Plugin Build
+
         ChatMessageHandler handler = new BasicChatMessageHandler("crafty");
 
         getServer().getPluginManager().registerEvents(new PlayerMessageEvent(handler,this),this);
