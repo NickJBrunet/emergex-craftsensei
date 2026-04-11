@@ -74,12 +74,19 @@ CSRF_TRUSTED_ORIGINS = [
     "https://craftsensei-kz3kyj7bx-craftsensei.vercel.app",
 ]
 
+
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://craftsensei-kz3kyj7bx-craftsensei.vercel.app",
+    "https://craftsensei-git-final-integration-craftsensei.vercel.app",
 ]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://craftsensei-.*-craftsensei\.vercel\.app$",
+]
+
+
 
 DATABASES = {
     "default": dj_database_url.config(
