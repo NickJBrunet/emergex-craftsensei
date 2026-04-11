@@ -7,7 +7,7 @@ on:
       - dev
 
 env:
-  PROJECT_ID: YOUR_PROJECT_ID
+  PROJECT_ID: craftybot-492822
   REGION: northamerica-northeast1
   SERVICE: backend
   REPOSITORY: backend
