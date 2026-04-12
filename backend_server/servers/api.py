@@ -1,6 +1,7 @@
 import datetime
 
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
@@ -19,18 +20,35 @@ from servers.services import generate_bot_response
 router = Router()
 
 
-@router.get("", response=list[ServerOut], auth=JWTAuth())
+@router.get("", auth=JWTAuth())
 def list_servers(request):
     user = request.auth
 
-    servers = MinecraftServer.objects.filter(owner=user)
+    try:
+        servers = MinecraftServer.objects.filter(owner=user)
 
-    return [
-        ServerOut.from_orm(server)
-        for server in servers
-    ]
+        out = []
+        for s in servers:
+            out.append({
+                "id": str(s.id),
+                "name": s.name,
+                "owner_ign": s.owner_ign,
+                "is_active": s.is_active,
+                "created_at": str(s.created_at),
+                "last_seen": str(s.last_seen) if s.last_seen else None,
+            })
+
+        return out
+
+    except Exception as e:
+        import traceback
+        return {
+            "ERROR": str(e),
+            "TRACE": traceback.format_exc()
+        }
 
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
+@csrf_exempt
 def create_server(request, payload: ServerCreateIn):
     user = request.auth
 
