@@ -5,19 +5,18 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class JWTAuth(APIKeyCookie):
-    param_name = "access_token"
+class JWTAuth:
+    def __call__(self, request):
+        key = request.COOKIES.get("access_token")
 
-    def authenticate(self, request, key):
+        print("RAW TOKEN:", repr(key))  # debug
+
+        if not key:
+            return None
+
         try:
             validated = AccessToken(key)
-
-            print("==== TOKEN PAYLOAD ====")
-            print(dict(validated))
-            print("=======================")
-
-            user = User.objects.get(id=validated["user_id"])
-            return user
+            return User.objects.get(id=validated["user_id"])
         except Exception as e:
             print("JWT ERROR:", e)
             return None
