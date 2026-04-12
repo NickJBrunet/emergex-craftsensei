@@ -19,26 +19,31 @@ from servers.services import generate_bot_response
 router = Router()
 
 
-# ✅ FIXED: use response schema + return queryset directly
 @router.get("", response=list[ServerOut], auth=JWTAuth())
 def list_servers(request):
+    if not request.auth:
+        raise HttpError(401, "Unauthorized")
+
     return MinecraftServer.objects.filter(owner=request.auth)
 
 
-# ✅ FIXED: removed ensure_csrf_cookie + return model directly
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
 def create_server(request, payload: ServerCreateIn):
-    server = MinecraftServer.objects.create(
+    if not request.auth:
+        raise HttpError(401, "Unauthorized")
+
+    return MinecraftServer.objects.create(
         owner=request.auth,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
-    return server
 
 
-# ✅ FIXED: use UUID (matches schema) + return model directly
 @router.get("{server_id}", response=ServerOut, auth=JWTAuth())
 def get_server(request, server_id: UUID):
+    if not request.auth:
+        raise HttpError(401, "Unauthorized")
+
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
