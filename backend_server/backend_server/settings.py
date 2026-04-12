@@ -4,6 +4,12 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
+import os
+
+print("==== DATABASE_URL RAW ====")
+print(repr(os.environ.get("DATABASE_URL")))
+print("==========================")
+
 # load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
