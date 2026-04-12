@@ -4,13 +4,9 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-import os
-
 print("==== DATABASE_URL RAW ====")
 print(repr(os.environ.get("DATABASE_URL")))
 print("==========================")
-
-# load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,6 +50,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+    'django.middleware.csrf.CsrfViewMiddleware',  # ✅ FIX
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -76,12 +75,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_server.wsgi.application'
 
+# ✅ FIXED CSRF TRUST
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://craftsensei.vercel.app",
+    "https://*.vercel.app",
 ]
 
-
+# ✅ CORS
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
@@ -93,9 +94,9 @@ CORS_ALLOW_HEADERS = [
     "content-type",
     "authorization",
     "x-csrftoken",
+    "accept",
+    "origin",
 ]
-
-
 
 DATABASES = {
     "default": dj_database_url.config(
@@ -125,4 +126,3 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
