@@ -11,6 +11,11 @@ class JWTAuth(APIKeyCookie):
     def authenticate(self, request, key):
         try:
             validated = AccessToken(key)
+
+            print("==== TOKEN PAYLOAD ====")
+            print(dict(validated))
+            print("=======================")
+
             user = User.objects.get(id=validated["user_id"])
             return user
         except Exception as e:
