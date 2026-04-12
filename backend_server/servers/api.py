@@ -1,6 +1,6 @@
 import datetime
 
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.shortcuts import get_object_or_404
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
@@ -19,49 +19,41 @@ from servers.services import generate_bot_response
 router = Router()
 
 
+@router.get("", response=list[ServerOut], auth=JWTAuth())
+def list_servers(request):
+    user = request.auth
+
+    servers = MinecraftServer.objects.filter(owner=user)
+
+    return [
+        ServerOut.from_orm(server)
+        for server in servers
+    ]
+
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
-@ensure_csrf_cookie
 def create_server(request, payload: ServerCreateIn):
-    """
-    Create a new Minecraft server and generate API key.
-    """
-    if not request.auth:
-        raise HttpError(401, "Unauthorized")
+    user = request.auth
 
     server = MinecraftServer.objects.create(
-        owner=request.auth,
+        owner=user,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
-    return server
+
+    return ServerWithKeyOut.from_orm(server)
 
 
-@router.get("", response=list[ServerWithKeyOut], auth=JWTAuth())
-def list_servers(request):
-    """
-    List all servers owned by authenticated user.
-    """
-    if not request.auth:
-        raise HttpError(401, "Unauthorized")
+@router.get("{server_id}", response=ServerOut, auth=JWTAuth())
+def get_server(request, server_id: int):
+    user = request.auth
 
-    return MinecraftServer.objects.filter(owner=request.auth)
+    server = get_object_or_404(
+        MinecraftServer,
+        id=server_id,
+        owner=user
+    )
 
-
-@router.get("{server_id}", response=ServerWithKeyOut, auth=JWTAuth())
-def get_server(request, server_id: UUID):
-    """
-    Retrieve a single server owned by the user.
-    """
-    if not request.auth:
-        raise HttpError(401, "Unauthorized")
-
-    try:
-        return MinecraftServer.objects.get(
-            id=server_id,
-            owner=request.auth
-        )
-    except MinecraftServer.DoesNotExist:
-        raise HttpError(404, "Server not found")
+    return ServerOut.from_orm(server)
 
 
 @router.patch("{server_id}", response=ServerOut, auth=JWTAuth())
@@ -111,20 +103,16 @@ def rotate_api_key(request, server_id: UUID):
 
 
 @router.delete("{server_id}", auth=JWTAuth())
-def delete_server(request, server_id: UUID):
-    """
-    Hard delete a server (irreversible).
-    """
-    if not request.auth:
-        raise HttpError(401, "Unauthorized")
+def delete_server(request, server_id: int):
+    user = request.auth
 
-    deleted, _ = MinecraftServer.objects.filter(
+    server = get_object_or_404(
+        MinecraftServer,
         id=server_id,
-        owner=request.auth
-    ).delete()
+        owner=user
+    )
 
-    if not deleted:
-        raise HttpError(404, "Server not found")
+    server.delete()
 
     return {"success": True}
 

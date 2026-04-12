@@ -1,5 +1,4 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
 from ninja.errors import HttpError
@@ -23,7 +22,6 @@ def get_tokens_for_user(user):
 
 
 @router.get("/me", auth=JWTAuth())
-@ensure_csrf_cookie
 def me(request):
     user = request.auth
 
