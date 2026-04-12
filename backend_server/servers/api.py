@@ -21,19 +21,19 @@ router = Router()
 
 @router.get("", response=list[ServerOut], auth=JWTAuth())
 def list_servers(request):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
-    return MinecraftServer.objects.filter(owner=request.auth)
+    return MinecraftServer.objects.filter(owner=request.user)  # ✅ FIX
 
 
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
 def create_server(request, payload: ServerCreateIn):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
     return MinecraftServer.objects.create(
-        owner=request.auth,
+        owner=request.user,  # ✅ FIX
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
@@ -41,26 +41,26 @@ def create_server(request, payload: ServerCreateIn):
 
 @router.get("{server_id}", response=ServerOut, auth=JWTAuth())
 def get_server(request, server_id: UUID):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=request.auth
+        owner=request.user  # ✅ FIX
     )
     return server
 
 
 @router.patch("{server_id}", response=ServerOut, auth=JWTAuth())
 def update_server(request, server_id: UUID, payload: ServerUpdateIn):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.auth
+            owner=request.user  # ✅ FIX
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
@@ -77,13 +77,13 @@ def update_server(request, server_id: UUID, payload: ServerUpdateIn):
 
 @router.post("{server_id}/rotate-key", response=ServerWithKeyOut, auth=JWTAuth())
 def rotate_api_key(request, server_id: UUID):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.auth
+            owner=request.user  # ✅ FIX
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
@@ -92,13 +92,12 @@ def rotate_api_key(request, server_id: UUID):
     return server
 
 
-# ✅ FIXED: UUID consistency
 @router.delete("{server_id}", auth=JWTAuth())
 def delete_server(request, server_id: UUID):
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=request.auth
+        owner=request.user  # ✅ FIX
     )
     server.delete()
     return {"success": True}
@@ -106,13 +105,13 @@ def delete_server(request, server_id: UUID):
 
 @router.get("{server_id}/ping", auth=JWTAuth())
 def ping_server(request, server_id: UUID):
-    if not request.auth:
+    if not request.user.is_authenticated:  # ✅ FIX
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.auth
+            owner=request.user  # ✅ FIX
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
@@ -144,7 +143,7 @@ def heartbeat(request, server_id: UUID):
 @router.post("{server_id}/chat", auth=ServerAPIKeyAuth())
 def bot_chat(request, server_id: UUID, data: ChatIn):
     server = request.server
-    owner = request.user
+    owner = request.user  # (kept but not used)
 
     if str(server.id) != str(server_id):
         raise HttpError(403, "Forbidden")
