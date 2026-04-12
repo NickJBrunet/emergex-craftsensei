@@ -62,8 +62,8 @@ def refresh_token(request):
         key="access_token",
         value=tokens["access"],
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         path="/",
     )
 
@@ -71,8 +71,8 @@ def refresh_token(request):
         key="refresh_token",
         value=tokens["refresh"],
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         path="/",
     )
 
@@ -100,8 +100,8 @@ def register(request, data: RegisterIn):
         key="access_token",
         value=tokens["access"],
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         path="/",
     )
 
@@ -132,8 +132,8 @@ def login(request, data: LoginIn):
         key="access_token",
         value=tokens["access"],
         httponly=True,
-        secure=False,   # True in production (HTTPS)
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         path="/",
     )
 
@@ -142,8 +142,8 @@ def login(request, data: LoginIn):
         key="refresh_token",
         value=tokens["refresh"],
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         path="/",
     )
 
@@ -163,13 +163,11 @@ def logout(request):
     response.delete_cookie(
         key="access_token",
         path="/",
-        samesite="Lax",
     )
 
     response.delete_cookie(
         key="refresh_token",
         path="/",
-        samesite="Lax",
     )
 
     return response
