@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
@@ -48,7 +48,7 @@ def list_servers(request):
         }
 
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
-@csrf_exempt
+@ensure_csrf_cookie
 def create_server(request, payload: ServerCreateIn):
     user = request.auth
 
