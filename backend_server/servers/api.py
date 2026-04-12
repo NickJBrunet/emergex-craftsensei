@@ -1,5 +1,6 @@
 import datetime
 
+from django.views.decorators.csrf import ensure_csrf_cookie
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
@@ -19,6 +20,7 @@ router = Router()
 
 
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
+@ensure_csrf_cookie
 def create_server(request, payload: ServerCreateIn):
     """
     Create a new Minecraft server and generate API key.
@@ -27,7 +29,7 @@ def create_server(request, payload: ServerCreateIn):
         raise HttpError(401, "Unauthorized")
 
     server = MinecraftServer.objects.create(
-        owner=request.auth,
+        owner_id=request.auth.id,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
