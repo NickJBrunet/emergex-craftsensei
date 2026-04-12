@@ -29,7 +29,7 @@ def create_server(request, payload: ServerCreateIn):
         raise HttpError(401, "Unauthorized")
 
     server = MinecraftServer.objects.create(
-        owner_id=request.auth.id,
+        owner=request.auth,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
@@ -44,7 +44,7 @@ def list_servers(request):
     if not request.auth:
         raise HttpError(401, "Unauthorized")
 
-    return MinecraftServer.objects.filter(owner=request.auth)  # ✅ fixed
+    return MinecraftServer.objects.filter(owner=request.auth)
 
 
 @router.get("{server_id}", response=ServerWithKeyOut, auth=JWTAuth())
