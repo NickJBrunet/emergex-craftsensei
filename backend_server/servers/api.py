@@ -1,7 +1,6 @@
 import datetime
 
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from ninja import Router
 from ninja.errors import HttpError
 from uuid import UUID
@@ -20,65 +19,36 @@ from servers.services import generate_bot_response
 router = Router()
 
 
-@router.get("", auth=JWTAuth())
+# ✅ FIXED: use response schema + return queryset directly
+@router.get("", response=list[ServerOut], auth=JWTAuth())
 def list_servers(request):
-    user = request.auth
+    return MinecraftServer.objects.filter(owner=request.auth)
 
-    try:
-        servers = MinecraftServer.objects.filter(owner=user)
 
-        out = []
-        for s in servers:
-            out.append({
-                "id": str(s.id),
-                "name": s.name,
-                "owner_ign": s.owner_ign,
-                "is_active": s.is_active,
-                "created_at": str(s.created_at),
-                "last_seen": str(s.last_seen) if s.last_seen else None,
-            })
-
-        return out
-
-    except Exception as e:
-        import traceback
-        return {
-            "ERROR": str(e),
-            "TRACE": traceback.format_exc()
-        }
-
+# ✅ FIXED: removed ensure_csrf_cookie + return model directly
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
-@ensure_csrf_cookie
 def create_server(request, payload: ServerCreateIn):
-    user = request.auth
-
     server = MinecraftServer.objects.create(
-        owner=user,
+        owner=request.auth,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
+    return server
 
-    return ServerWithKeyOut.from_orm(server)
 
-
+# ✅ FIXED: use UUID (matches schema) + return model directly
 @router.get("{server_id}", response=ServerOut, auth=JWTAuth())
-def get_server(request, server_id: int):
-    user = request.auth
-
+def get_server(request, server_id: UUID):
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=user
+        owner=request.auth
     )
-
-    return ServerOut.from_orm(server)
+    return server
 
 
 @router.patch("{server_id}", response=ServerOut, auth=JWTAuth())
 def update_server(request, server_id: UUID, payload: ServerUpdateIn):
-    """
-    Update server metadata (name, active state).
-    """
     if not request.auth:
         raise HttpError(401, "Unauthorized")
 
@@ -102,9 +72,6 @@ def update_server(request, server_id: UUID, payload: ServerUpdateIn):
 
 @router.post("{server_id}/rotate-key", response=ServerWithKeyOut, auth=JWTAuth())
 def rotate_api_key(request, server_id: UUID):
-    """
-    Rotate the API key (for compromised plugin keys).
-    """
     if not request.auth:
         raise HttpError(401, "Unauthorized")
 
@@ -120,26 +87,20 @@ def rotate_api_key(request, server_id: UUID):
     return server
 
 
+# ✅ FIXED: UUID consistency
 @router.delete("{server_id}", auth=JWTAuth())
-def delete_server(request, server_id: int):
-    user = request.auth
-
+def delete_server(request, server_id: UUID):
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=user
+        owner=request.auth
     )
-
     server.delete()
-
     return {"success": True}
+
 
 @router.get("{server_id}/ping", auth=JWTAuth())
 def ping_server(request, server_id: UUID):
-    """
-    Returns whether the server is actively connected.
-    A server is considered live if it's active and has communicated within the last 60 seconds.
-    """
     if not request.auth:
         raise HttpError(401, "Unauthorized")
 
@@ -160,15 +121,10 @@ def ping_server(request, server_id: UUID):
         "is_active": server.is_active,
     }
 
-import datetime
 
 @router.post("{server_id}/heartbeat", auth=ServerAPIKeyAuth())
 def heartbeat(request, server_id: UUID):
-    """
-    Called periodically by the plugin to signal it's alive.
-    Uses X-API-Key auth, same as the chat endpoint.
-    """
-    server = request.server  # attached by ServerAPIKeyAuth
+    server = request.server
 
     if str(server.id) != str(server_id):
         raise HttpError(403, "Forbidden")
@@ -179,31 +135,19 @@ def heartbeat(request, server_id: UUID):
 
     return {"ok": True}
 
+
 @router.post("{server_id}/chat", auth=ServerAPIKeyAuth())
 def bot_chat(request, server_id: UUID, data: ChatIn):
-    """
-    Core endpoint for Crafty AI bot interaction.
-    Can be used by:
-    - Minecraft plugin
-    - Dashboard
-    - External tools
-
-    POST localhost:8000/api/server/{server_id}/chat
-    """
-
-    server = request.server      # the minecraft server
-    owner = request.user         # dashboard user (owner)
+    server = request.server
+    owner = request.user
 
     if str(server.id) != str(server_id):
         raise HttpError(403, "Forbidden")
 
-    start_time = datetime.time()
-
     try:
         bot_reply = generate_bot_response(data.message)
         success = True
-        error_message = None
-    except Exception as e:
+    except Exception:
         bot_reply = ""
         success = False
 
@@ -216,4 +160,5 @@ def bot_chat(request, server_id: UUID, data: ChatIn):
         bot_message=bot_reply,
         success=success
     )
+
     return {"response": bot_reply}
