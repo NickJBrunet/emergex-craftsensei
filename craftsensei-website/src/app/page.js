@@ -194,6 +194,16 @@ export default function Home() {
                     <span>Customizable response style & permissions</span>
                   </li>
                 </ul>
+
+                <div className="mt-6">
+                  <Link
+                    href="/crafty-interact"
+                    className="inline-flex rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-emerald-950 shadow hover:scale-105 active:scale-100 hover:bg-emerald-400 hover:cursor-pointer"
+                  >
+                    Interact with Crafty
+                  </Link>
+                </div>
+
               </div>
 
               {/* Make Crafty bot bounce on click maybe also flip horizontally or spin while bouncing 
