@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import { useAuth } from "@/app/context/authContext";
 import {ServerProvider} from "@/app/context/serverContext";
+import handleRefresh from "@/utils/auth/handleRefresh";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -17,7 +18,7 @@ export default function DashboardLayout({ children }) {
     { href: "/dashboard/settings", label: "Settings" },
   ];
 
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, loading, fetchUser } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -53,17 +54,11 @@ export default function DashboardLayout({ children }) {
     window.touchStartX = null;
   };
 
-  const { isAuthenticated, loading } = useAuth()
-
   useEffect(() => {
-
-    if (!loading) {
-      if (!isAuthenticated) {
-        router.push("/");
-      }
+    if (!loading && !isAuthenticated) {
+      router.replace("/");
     }
-
-  }, [isAuthenticated, loading, router]);
+  }, [loading, isAuthenticated, router]);
 
   return (
     <>
