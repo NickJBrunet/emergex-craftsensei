@@ -5,6 +5,7 @@ from ninja.errors import HttpError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
+from backend_server.settings import DEBUG
 from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
@@ -74,9 +75,9 @@ def register(request, data: RegisterIn):
         key="refresh_token",
         value=tokens["refresh"],
         httponly=True,
-        secure=True,
-        samesite="None",
-        path="/api/auth/refresh",
+        secure=not DEBUG,
+        samesite="None" if not DEBUG else "Lax",
+        path="/"
     )
 
     return response
@@ -103,9 +104,9 @@ def login(request, data: LoginIn):
         key="refresh_token",
         value=tokens["refresh"],
         httponly=True,
-        secure=True,
-        samesite="None",
-        path="/api/auth/refresh",
+        secure=not DEBUG,
+        samesite="None" if not DEBUG else "Lax",
+        path="/"
     )
 
     return response
@@ -122,7 +123,7 @@ def logout(request):
 
     response.delete_cookie(
         key="refresh_token",
-        path="/api/auth/refresh",
+        path="/",
     )
 
     return response

@@ -6,7 +6,8 @@ export default async function handleLogin(accountProp) {
 
     const data = await apiRequest(USER_LOGIN_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify(accountProp)
+        body: JSON.stringify(accountProp),
+        credentials: "include",
     });
 
     localStorage.setItem("access", data.access);

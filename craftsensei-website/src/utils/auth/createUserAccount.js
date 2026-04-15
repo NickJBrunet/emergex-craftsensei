@@ -6,7 +6,8 @@ export default async function createUserAccount(accountProp) {
 
     const data = await apiRequest(USER_CREATE_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify(accountProp)
+        body: JSON.stringify(accountProp),
+        credentials: "include",
     });
 
     localStorage.setItem("access", data.access);

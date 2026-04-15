@@ -6,6 +6,7 @@ export async function apiRequest(endpoint, options = {}, retry = true) {
 
   const config = {
     ...options,
+    credentials: options.credentials || "same-origin",
     headers: {
       ...(options.body && { "Content-Type": "application/json" }),
       ...(localStorage.getItem("access") && {
