@@ -14,27 +14,24 @@ function LoginContent() {
   const [error, setError] = useState('');
 
   // Check for ?message=account_created in URL to show success message after signup
-  const searchParams = useSearchParams();
-  const messageParam = searchParams.get("message");
 
   const router = useRouter();
 
   const { login } = useAuth();
 
-  const [message, setMessage] = useState(messageParam);
+  const searchParams = useSearchParams();
+  const messageParam = searchParams.get("message");
+  const [hideMessage, setHideMessage] = useState(false);
 
   // Show message if redirected from signup with ?message=account_created, then auto-hide after 3 seconds
   useEffect(() => {
     if (messageParam) {
-      setMessage(messageParam);
-
-      const timer = setTimeout(() => {
-        setMessage(null);
-      }, 3000); // ⏳ 3 seconds
-
+      const timer = setTimeout(() => setHideMessage(true), 3000);
       return () => clearTimeout(timer);
     }
   }, [messageParam]);
+
+  const showMessage = messageParam && !hideMessage;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,7 +145,7 @@ function LoginContent() {
                 </button>
               </form>
 
-              {message && (
+              {showMessage && (
                 <div className="text-center rounded-xl bg-emerald-500/20 border border-emerald-500/50 p-4 text-emerald-200 mb-6 mt-4">
                   Account created! You can now sign in.
                 </div>

@@ -26,6 +26,8 @@ def get_tokens_for_user(user):
 def me(request):
     user = request.auth
 
+    print("COOKIES:", request.COOKIES)
+
     if not user:
         raise HttpError(401, "Not authenticated")
 
@@ -127,3 +129,5 @@ def logout(request):
     )
 
     return response
+
+

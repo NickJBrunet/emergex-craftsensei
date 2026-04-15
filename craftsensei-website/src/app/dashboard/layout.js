@@ -15,22 +15,21 @@ export default function DashboardLayout({ children }) {
     { href: "/dashboard", label: "Overview" },
     { href: "/dashboard/servers", label: "Servers" },
     { href: "/dashboard/api", label: "API Keys" },
+    { href: "/dashboard/history", label: "Chat History" },
     { href: "/dashboard/settings", label: "Settings" },
   ];
 
   const { logout, isAuthenticated, loading, fetchUser } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout().then(() => {
-
-        router.push("/");
-
-    }).catch((err) => {
-
-        console.error(err.message);
-
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      router.push("/");
+    }
   };
 
   const handleTouchStart = (e) => {

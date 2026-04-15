@@ -47,7 +47,12 @@ function ServerCard({ server, onView, onDelete }) {
     );
 }
 
-export default function ClientDashboard({ userName }) {
+export default function ClientDashboard() {
+
+  const { user } = useAuth();
+  const displayName = user?.displayName || 
+                     user?.email?.split('@')[0] || 
+                     'Minecraft User';
 
   const { servers, createServer, removeServer } = useServers()
 
@@ -148,11 +153,8 @@ export default function ClientDashboard({ userName }) {
     <>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="inline-flex rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
-            Logged in dashboard
-          </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Welcome back, {userName}!
+            Welcome back, {displayName}!
           </h1>
           <p className="mt-3 max-w-2xl text-zinc-200">
             Register your Minecraft server, generate an API key, and prepare your Craft Sensei setup.
@@ -189,9 +191,6 @@ export default function ClientDashboard({ userName }) {
           {/* Server Registration Form - Exact same */}
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Register your server</h2>
-            <p className="mt-2 text-sm text-zinc-300">
-              This form is local-only for now. It stores the data in the dashboard UI until you connect your backend.
-            </p>
             <form onSubmit={handleRegisterServer} className="mt-6 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-zinc-200">Server Name</label>
@@ -234,7 +233,6 @@ export default function ClientDashboard({ userName }) {
             </form>
           </div>
 
-          {/* Registered Servers List - Exact same */}
           <div className="rounded-3xl border border-emerald-500/30 bg-black/60 p-6 backdrop-blur-xl">
             <h2 className="text-2xl font-semibold text-white">Registered servers</h2>
             {!servers || servers.length === 0 ? (
@@ -323,3 +321,5 @@ export default function ClientDashboard({ userName }) {
     </>
   );
 }
+
+
