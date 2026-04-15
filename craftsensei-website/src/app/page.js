@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 
-
 export default function Home() {
 
   const backgroundImages = [
@@ -91,7 +90,7 @@ export default function Home() {
               <p className="inline-flex rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-emerald-200 [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
                 AI companion for Minecraft
               </p>
-              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl [text-shadow:0_4px_8px_rgba(0,0,0,0.4)]">
+              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl sm:[text-shadow:0_4px_8px_rgba(0,0,0,0.4)]">
                 Chat with your world, not just your friends.
               </h1>
               <p className="text-base text-zinc-200 sm:text-lg [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
@@ -99,6 +98,14 @@ export default function Home() {
                 Minecraft server to answer crafting questions, suggest builds,
                 and help you survive the night.
               </p>
+
+              {/* <p className="text-base font-semibold text-zinc-200 sm:text-lg [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
+                Craft Sensei Mod brings an intelligent chat bot <span className="font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] pb-2">Crafty</span> into your
+                Minecraft server to answer crafting questions, suggest builds,
+                and help you survive the night.
+              </p> */}
+
+
               <div className="flex flex-wrap items-center gap-4">
                 <button
                   type="button"
@@ -187,18 +194,36 @@ export default function Home() {
                     <span>Customizable response style & permissions</span>
                   </li>
                 </ul>
+
+                <div className="mt-6">
+                  <Link
+                    href="/crafty-interact"
+                    className="inline-flex rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-emerald-950 shadow hover:scale-105 active:scale-100 hover:bg-emerald-400 hover:cursor-pointer"
+                  >
+                    Interact with Crafty
+                  </Link>
+                </div>
+
               </div>
-              <div className="relative h-96 w-full rounded-3xl bg-gradient-to-br from-emerald-900/30 via-black/50 to-emerald-900/20 p-8 lg:h-[500px] backdrop-blur-xl border border-emerald-500/30">
+
+              {/* Make Crafty bot bounce on click maybe also flip horizontally or spin while bouncing 
+              Also removed gradient in bottom right corner so the bounce effect doesnt just look like a ong floating
+              
+              */}
+              <div className="relative h-96 w-full rounded-3xl bg-gradient-to-br from-emerald-900/30 via-black/50 to-emerald-900/20 p-8 lg:h-[500px] backdrop-blur-xl border border-emerald-500/30 top-17">
                 <Image
-                  src="/images/crafty-character.png" 
+                  src="/images/finalCrafty2.png" 
                   alt="Meet Crafty - Your Minecraft AI companion"
                   fill
+                  draggable="false"
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain rounded-2xl shadow-2xl"
+                  className="object-contain rounded-2xl animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing"
                 />
+                {/* Temp will fix with usestate and handler for onclick */}
+                {/* animate-bounce hover:cursor-grab active:animate-none active:cursor-grabbing */}
 
                 {/* Not needed */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-transparent to-emerald-500/20 rounded-3xl blur opacity-75" />
+                {/* <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-transparent to-emerald-500/20 rounded-3xl blur opacity-75" /> */}
               </div>
             </div>
           </div>
@@ -373,11 +398,11 @@ export default function Home() {
  * 
  * 
  * ======= DONE =========
- * Create a log in/signup page
+ * Create a log in/signup page - done
  * 
- * Create an about the developers page
+ * Create an about the developers page - done
  * 
- * Create a support page (users can fill out form)
+ * Create a support page (users can fill out form) - done
  * 
  * Add a back home button to login and signup pages
  * 

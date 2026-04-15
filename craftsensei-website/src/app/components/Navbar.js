@@ -2,30 +2,190 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "@/app/context/authContext";
+import { useRouter } from "next/navigation";
 
-export default function Navbar() { 
+export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const [ clickCounter, setClickCounter ] = useState(0);
+  const [ logoImage, setLogoImage ] = useState(0);
+  const [ title, setTitle ] = useState("Craft Sensei");
+
+  const logos = [
+    "/minecraft_logo.svg",
+    "/crafty.svg",
+  ];
+
+  // Fetch session from your /api/auth/session endpoint
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     try {
+  //       const res = await fetch("/api/auth/session", { cache: "no-store" });
+  //       const data = await res.json();
+  //       setSession(data.session);
+  //     } catch (err) {
+  //       console.error("Session fetch error:", err);
+  //     }
+  //   }
+  //   fetchSession();
+  // }, []);
+  //
+  // // Handle logout by clearing the token cookie via backend route
+  const handleLogout = async () => {
+
+    logout().then(() => {
+
+      router.push("/");
+
+    }).catch((err) => {
+
+      console.error(err.message);
+
+    });
+
+  };
 
 
+  const handleLogoClick = () => {
+    setClickCounter((prev) => {
+      const newCount = prev + 1;
+      
+      if (newCount === 31) {
+        setLogoImage(1);
+        setTitle("Crafty Sensei!!!");
+      } 
+      // else if (newCount === 36) {
+      //   setLogoImage(0);
+      //   return 0;
+      // }
+      
+      return newCount;
+    });
+  };
 
   return (
-          <header className="sticky top-0 z-30 bg-[#22190a] px-6 py-3 shadow-md">
-            <nav className="mx-auto flex px-10 items-center justify-between">
-      
-              <div className="flex items-center gap-3">
-                <div className="relative h-8 w-8">
-                  <Image
-                    src="/images/minecraft_block.jpg"
-                    // To be replaced with the Craft Sensei logo once designed. For now, using a placeholder Minecraft bot image.
-                    alt="Craft Sensei Logo"
-                    fill
-                    sizes="32px"
-                    className="rounded-sm object-cover"
-                  />
-                </div>
-                
-                <Link href="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })} className="text-3xl font-semibold tracking-tight text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:underline active:scale-95">
-                Craft Sensei
+    <header className="sticky top-0 z-30 bg-[#22190a] px-6 py-3 shadow-md">
+      <nav className="mx-auto gap-5 flex px-1 sm:px-10 items-center justify-between">
+        <div className="flex items-center gap-3 sm:gap-5">
+          <div className="relative h-10 w-10">
+            <Image
+              src={logos[logoImage]}
+              alt="Craft Sensei Logo"
+              onClick={handleLogoClick}
+              fill
+              draggable="false"
+              sizes="32px"
+              className={logoImage === 1 ? `transition-all duration-300 active:animate-spin hover:cursor-grab rounded-sm object-contain active:scale-80 scale-125` : `rounded-sm object-contain hover:animate-spin hover:cursor-pointer active:scale-80`}
+            />
+          </div>
+
+          <Link
+            href="/"
+            onClick={() => {
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
+            }}
+            className="text-2xl md:text-3xl font-['Silkscreen'] tracking-[-0.05em] text-white [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)] hover:scale-105 active:scale-95 flex items-center pb-1"
+          >
+            {title}
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="md:flex hidden items-center gap-3">
+            {user ? (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className="hover:cursor-pointer rounded-full border border-emerald-200/60 px-4 py-1.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/40"
+                >
+                  Logout
+                </button>
+                <Link
+                  href="/dashboard"
+                  className="hover:cursor-pointer rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400"
+                >
+                  Your Dashboard
                 </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="hover:cursor-pointer rounded-full border border-emerald-200/60 px-4 py-1.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/40"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="hover:cursor-pointer rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1"
+          >
+            <span className="block w-5 h-0.5 bg-white"></span>
+            <span className="block w-5 h-0.5 bg-white"></span>
+            <span className="block w-5 h-0.5 bg-white"></span>
+          </button>
+        </div>
+      </nav>
+
+      {isMenuOpen && (
+        <div className="md:hidden bg-[#22190a] mt-3 border-t border-emerald-500/20 px-6 py-4">
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="block py-2 text-emerald-50 hover:text-emerald-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Your Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  handleLogout();
+                }}
+                className="block w-full text-left py-2 text-emerald-50 hover:text-emerald-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="block py-2 text-emerald-50 hover:text-emerald-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="block py-2 text-emerald-50 hover:text-emerald-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+    </header>
+  );
+}
+
 
 
                 {/* 3D with more glow testing this */}
@@ -38,27 +198,3 @@ export default function Navbar() {
       [text-shadow:1px_1px_0_#059669,2px_2px_0_#047857,3px_3px_0_#065f46,4px_4px_0_rgba(6,95,70,0.9)]">
                 Craft Sensei
               </span> */}
-    
-    
-              </div>
-    
-              <div className="flex items-center gap-3">
-                <button className="hover:cursor-pointer rounded-full border border-emerald-200/60 px-4 py-1.5 text-sm font-medium text-emerald-50 hover:bg-emerald-900/40">
-                <Link href="/auth/login">
-                  Log in
-                </Link>
-                </button>
-                <button className="hover:cursor-pointer rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-emerald-950 shadow hover:bg-emerald-400">
-                <Link href="/auth/signup">
-                  Sign Up
-                </Link>
-                </button>
-              </div>
-            </nav>
-          </header>
-
-  );
-
-}
-
-
