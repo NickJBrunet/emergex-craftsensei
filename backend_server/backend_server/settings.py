@@ -1,14 +1,12 @@
 from pathlib import Path
-
 import os
 import dj_database_url
 from dotenv import load_dotenv
 
-print("==== DATABASE_URL RAW ====")
-print(repr(os.environ.get("DATABASE_URL")))
-print("==========================")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Local development only: load .env if it exists
+load_dotenv(BASE_DIR / ".env")
 
 LOGIN_URL = "/auth/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
@@ -26,36 +24,37 @@ CSRF_COOKIE_SAMESITE = "None"
 
 APPEND_SLASH = False
 
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
+if not SECRET_KEY:
+    raise RuntimeError("DJANGO_SECRET_KEY is missing")
 
 ALLOWED_HOSTS = ["*"]
 
-ROOT_URLCONF = 'backend_server.urls'
+ROOT_URLCONF = "backend_server.urls"
 
 INSTALLED_APPS = [
     "corsheaders",
-    'accounts',
-    'servers',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django_extensions',
+    "accounts",
+    "servers",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-
-    'django.middleware.csrf.CsrfViewMiddleware',  # ✅ FIX
-
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 TEMPLATES = [
@@ -73,16 +72,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend_server.wsgi.application'
+WSGI_APPLICATION = "backend_server.wsgi.application"
 
-# ✅ FIXED CSRF TRUST
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://craftsensei.vercel.app",
     "https://*.vercel.app",
 ]
 
-# ✅ CORS
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
@@ -98,31 +95,38 @@ CORS_ALLOW_HEADERS = [
     "origin",
 ]
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is missing")
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ["DATABASE_URL"],
-        conn_max_age=600,
-    )
+    "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+}
 
 AUTH_USER_MODEL = "accounts.User"
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True

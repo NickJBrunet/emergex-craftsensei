@@ -19,48 +19,48 @@ from servers.services import generate_bot_response
 router = Router()
 
 
-@router.get("", response=list[ServerOut], auth=JWTAuth())
+@router.get("", response=list[ServerWithKeyOut], auth=JWTAuth())
 def list_servers(request):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
-    return MinecraftServer.objects.filter(owner=request.user)  # ✅ FIX
+    return MinecraftServer.objects.filter(owner=request.user)
 
 
 @router.post("", response=ServerWithKeyOut, auth=JWTAuth())
 def create_server(request, payload: ServerCreateIn):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
     return MinecraftServer.objects.create(
-        owner=request.user,  # ✅ FIX
+        owner=request.user,
         name=payload.name,
         owner_ign=payload.owner_ign,
     )
 
 
-@router.get("{server_id}", response=ServerOut, auth=JWTAuth())
+@router.get("{server_id}", response=ServerWithKeyOut, auth=JWTAuth())
 def get_server(request, server_id: UUID):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=request.user  # ✅ FIX
+        owner=request.user
     )
     return server
 
 
 @router.patch("{server_id}", response=ServerOut, auth=JWTAuth())
 def update_server(request, server_id: UUID, payload: ServerUpdateIn):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.user  # ✅ FIX
+            owner=request.user
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
@@ -77,13 +77,13 @@ def update_server(request, server_id: UUID, payload: ServerUpdateIn):
 
 @router.post("{server_id}/rotate-key", response=ServerWithKeyOut, auth=JWTAuth())
 def rotate_api_key(request, server_id: UUID):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.user  # ✅ FIX
+            owner=request.user
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
@@ -97,7 +97,7 @@ def delete_server(request, server_id: UUID):
     server = get_object_or_404(
         MinecraftServer,
         id=server_id,
-        owner=request.user  # ✅ FIX
+        owner=request.user
     )
     server.delete()
     return {"success": True}
@@ -105,13 +105,13 @@ def delete_server(request, server_id: UUID):
 
 @router.get("{server_id}/ping", auth=JWTAuth())
 def ping_server(request, server_id: UUID):
-    if not request.user.is_authenticated:  # ✅ FIX
+    if not request.user.is_authenticated:
         raise HttpError(401, "Unauthorized")
 
     try:
         server = MinecraftServer.objects.get(
             id=server_id,
-            owner=request.user  # ✅ FIX
+            owner=request.user
         )
     except MinecraftServer.DoesNotExist:
         raise HttpError(404, "Server not found")
