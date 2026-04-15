@@ -1,38 +1,37 @@
-import {BACKEND_BASE_URL} from "@/utils/api/config";
+import { BACKEND_BASE_URL } from "@/utils/api/config";
+import handleRefresh from "@/utils/auth/handleRefresh";
 
-export async function apiRequest(endpoint, options = {}) {
+export async function apiRequest(endpoint, options = {}, retry = true) {
   const url = `${BACKEND_BASE_URL}${endpoint}`;
 
-  function getCSRFToken() {
-    const match = document.cookie.match(/csrftoken=([^;]+)/);
-    return match ? match[1] : null;
-  }
-
-  const defaultOptions = {
-    credentials: "include", // Allows Next.js to remember cookie and save automatically.
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCSRFToken(),
-    },
-  };
-
   const config = {
-    ...defaultOptions,
     ...options,
+    credentials: options.credentials || "same-origin",
     headers: {
-      ...defaultOptions.headers,
+      ...(options.body && { "Content-Type": "application/json" }),
+      ...(localStorage.getItem("access") && {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      }),
       ...(options.headers || {}),
     },
   };
 
   const res = await fetch(url, config);
 
-  // handle non-2xx responses
+  // On 401, attempt one token refresh then retry the original request
+  if (res.status === 401 && retry) {
+    try {
+      await handleRefresh();
+      return apiRequest(endpoint, options, false);
+    } catch {
+      throw new Error("Session expired. Please log in again.");
+    }
+  }
+
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`API Error ${res.status}: ${errorText}`);
   }
 
-  // auto parse json
   return res.json();
 }

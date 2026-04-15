@@ -8,8 +8,7 @@ class ServerAPIKeyAuth(APIKeyHeader):
     def authenticate(self, request, key):
         try:
             server = MinecraftServer.objects.get(
-                api_key=key,
-                is_active=True
+                api_key=key
             )
 
             # Attach useful context

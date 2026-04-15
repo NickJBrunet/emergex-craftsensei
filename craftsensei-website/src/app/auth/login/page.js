@@ -9,7 +9,9 @@ import {useAuth} from "@/app/context/authContext";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginContent() {
-  const [formData, setFormData] = useState({ email: '', password: '', loading: false, error: '', });
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Check for ?message=account_created in URL to show success message after signup
 
@@ -33,49 +35,26 @@ function LoginContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormData({ ...formData, loading: true, error: '' });
+    setLoading(true);
+    setError('');
 
-    const accountProp = {
-      email: formData.email,
-      password: formData.password
-    };
-
-    // try {
-    //   const response = await fetch('/api/auth/login', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       email: formData.email,
-    //       password: formData.password
-    //     })
-    //   });
-    //
-    //   const data = await response.json();
-    //
-    //   if (response.ok && data.success) {
-    //     router.push('/dashboard');
-    //   } else {
-    //     setFormData({ ...formData, error: data.error || 'Login failed' });
-    //   }
-    // } catch (err) {
-    //   setFormData({ ...formData, error: 'Login failed' });
-    // } finally {
-    //   setFormData({ ...formData, loading: false });
-    // }
-
-    login(accountProp).then(() => {
-
-      router.push("/dashboard");
-
-    }).catch((err) => {
-
-      setFormData({ ...formData, error: err.message });
-
-    }).finally(() => {
-
-      setFormData({ ...formData, loading: false });
-
-    });
+    login({ email: formData.email, password: formData.password })
+      .then(() => {
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        // apiRequestHandler throws "API Error 403: ..." — parse a clean message
+        if (err.message.includes('403')) {
+          setError('Invalid email or password.');
+        } else if (err.message.includes('404') || err.message.includes('500')) {
+          setError('Something went wrong. Please try again later.');
+        } else {
+          setError('Unable to connect. Check your internet connection.');
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleChange = (e) => {
@@ -151,11 +130,18 @@ function LoginContent() {
                   />
                 </div>
 
+                {error && (
+                  <div className="rounded-xl bg-red-500/20 border border-red-500/50 px-4 py-3 text-sm text-red-300">
+                    {error}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-emerald-950 shadow-lg hover:scale-105 active:scale-95 transition-all hover:cursor-pointer hover:bg-black hover:text-white hover:border-emerald-500/50 hover:border-2 max-h-14"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-emerald-500 px-6 py-4 text-base font-semibold text-emerald-950 shadow-lg hover:scale-105 active:scale-95 transition-all hover:cursor-pointer hover:bg-black hover:text-white hover:border-emerald-500/50 hover:border-2 max-h-14 disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
                 >
-                  Sign In
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </button>
               </form>
 

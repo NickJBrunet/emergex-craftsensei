@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import { useAuth } from "@/app/context/authContext";
 import {ServerProvider} from "@/app/context/serverContext";
+import handleRefresh from "@/utils/auth/handleRefresh";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function DashboardLayout({ children }) {
     { href: "/dashboard/settings", label: "Settings" },
   ];
 
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, loading, fetchUser } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -52,17 +53,11 @@ export default function DashboardLayout({ children }) {
     window.touchStartX = null;
   };
 
-  const { isAuthenticated, loading } = useAuth()
-
   useEffect(() => {
-
-    if (!loading) {
-      if (!isAuthenticated) {
-        router.push("/");
-      }
+    if (!loading && !isAuthenticated) {
+      router.replace("/");
     }
-
-  }, [isAuthenticated, loading, router]);
+  }, [loading, isAuthenticated, router]);
 
   return (
     <>
@@ -120,7 +115,6 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Dashboard</p>
 
               <button
                 onClick={handleLogout}
@@ -186,7 +180,6 @@ export default function DashboardLayout({ children }) {
                 Account
               </p>
               <p className="mt-2 text-sm font-medium text-white">Logged in user</p>
-              <p className="text-xs text-zinc-400">Dashboard</p>
 
               <button
                 onClick={handleLogout}
@@ -229,9 +222,6 @@ export default function DashboardLayout({ children }) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="hidden rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200 sm:inline-flex">
-                    Dashboard
-                  </span>
                   <Link
                     href="/dashboard/settings"
                     className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 hover:bg-emerald-400"
