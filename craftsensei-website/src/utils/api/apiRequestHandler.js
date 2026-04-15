@@ -4,16 +4,10 @@ import handleRefresh from "@/utils/auth/handleRefresh";
 export async function apiRequest(endpoint, options = {}, retry = true) {
   const url = `${BACKEND_BASE_URL}${endpoint}`;
 
-  function getCSRFToken() {
-    const match = document.cookie.match(/csrftoken=([^;]+)/);
-    return match ? match[1] : null;
-  }
-
   const defaultOptions = {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": getCSRFToken(),
     },
   };
 

@@ -8,24 +8,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Local development only: load .env if it exists
 load_dotenv(BASE_DIR / ".env")
 
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
 LOGIN_URL = "/auth/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/auth/login/"
 
 SESSION_COOKIE_DOMAIN = None
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
 
-CSRF_COOKIE_DOMAIN = None
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
 
 APPEND_SLASH = False
-
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 if not SECRET_KEY:
     raise RuntimeError("DJANGO_SECRET_KEY is missing")
@@ -51,7 +47,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -73,12 +68,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "backend_server.wsgi.application"
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "https://craftsensei.vercel.app",
-    "https://*.vercel.app",
-]
 
 CORS_ALLOW_CREDENTIALS = True
 
