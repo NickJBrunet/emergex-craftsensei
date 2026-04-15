@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8080
 
 # Run server (prod = gunicorn)
-CMD ["gunicorn", "backend_server.wsgi:application", "--bind", "0.0.0.0:8080"]
+CMD ["sh", "-c", "gunicorn backend_server.wsgi:application --bind 0.0.0.0:$PORT"]
