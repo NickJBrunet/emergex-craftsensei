@@ -19,14 +19,17 @@ SESSION_COOKIE_DOMAIN = None
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
-
+SESSION_COOKIE_NAME = "sessionid"
 
 APPEND_SLASH = False
 
-if not SECRET_KEY:
-    raise RuntimeError("DJANGO_SECRET_KEY is missing")
+ALLOWED_HOSTS = [
+    "backend-411560433995.northamerica-northeast1.run.app",
+    "localhost",
+    "127.0.0.1"
+]
 
-ALLOWED_HOSTS = ["*"]
+# DJANGO TEMPLATE
 
 ROOT_URLCONF = "backend_server.urls"
 
@@ -67,9 +70,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "backend_server.wsgi.application"
+# CORS
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_EXPOSE_HEADERS = ["Content-Type"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -79,10 +86,11 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_HEADERS = [
     "content-type",
     "authorization",
-    "x-csrftoken",
     "accept",
     "origin",
 ]
+
+# DATABASE
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
@@ -92,12 +100,16 @@ DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
 
+# PASSWORD VALIDATORS FOR ACCOUNT CREATION VIA manage.py createuser & createsuperuser
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# LOGGING FOR GCP
 
 LOGGING = {
     "version": 1,
@@ -113,9 +125,11 @@ LOGGING = {
     },
 }
 
-AUTH_USER_MODEL = "accounts.User"
+# MISC
 
+AUTH_USER_MODEL = "accounts.User"
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+WSGI_APPLICATION = "backend_server.wsgi.application"

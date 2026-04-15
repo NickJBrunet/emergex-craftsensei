@@ -6,16 +6,13 @@ export async function apiRequest(endpoint, options = {}, retry = true) {
 
   const defaultOptions = {
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
   };
 
   const config = {
     ...defaultOptions,
     ...options,
     headers: {
-      ...defaultOptions.headers,
+      ...(options.body && { "Content-Type": "application/json" }),
       ...(options.headers || {}),
     },
   };
