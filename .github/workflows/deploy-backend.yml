@@ -60,4 +60,5 @@ jobs:
             --allow-unauthenticated \
             --set-secrets DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest \
             --set-secrets DATABASE_URL=DATABASE_URL:latest \
+            --set-secrets OPENAI_API_KEY=OPENAI_API_KEY:latest \
             --add-cloudsql-instances $CLOUD_SQL_INSTANCE
