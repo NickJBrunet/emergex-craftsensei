@@ -15,7 +15,7 @@ public class Heartbeat implements Runnable {
     @Override
     public void run() {
         try {
-            String baseUrl = CraftyBot.getInstance().getConfig().getString("craft-api-base-url");
+            String baseUrl = CraftyBot.backendUrl;
             String apiKey = CraftyBot.getInstance().getConfig().getString("craft-api-key");
             String serverId = CraftyBot.getInstance().getConfig().getString("craft-server-id");
 

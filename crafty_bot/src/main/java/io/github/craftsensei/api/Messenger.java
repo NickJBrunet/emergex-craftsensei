@@ -21,7 +21,7 @@ import io.github.craftsensei.CraftyBot;
 public class Messenger {
     // called from BasicChatMessageHandler
     public CompletableFuture<String> sendToDjango(Player player, String message) {
-        String baseUrl = CraftyBot.getInstance().getConfig().getString("craft-api-base-url");
+        String baseUrl = CraftyBot.backendUrl;
         String apiKey = CraftyBot.getInstance().getConfig().getString("craft-api-key");
         String serverId = CraftyBot.getInstance().getConfig().getString("craft-server-id");
 
