@@ -1,16 +1,14 @@
-from ninja.security import APIKeyCookie
+from ninja.security import HttpBearer
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 
-class JWTAuth(APIKeyCookie):
-    param_name = "access_token"
-
-    def authenticate(self, request, key):
+class JWTAuth(HttpBearer):
+    def authenticate(self, request, token):
         try:
-            validated = AccessToken(key)
+            validated = AccessToken(token)
             user = User.objects.get(pk=validated["user_id"])
 
             request.user = user

@@ -12,30 +12,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in (cookie exists)
   const fetchUser = useCallback(async () => {
 
     try {
-
       const data = await apiRequest("/api/auth/me");
       setUser(data);
-
     } catch {
-
-      try {
-
-        await handleRefresh();
-        const data = await apiRequest("/api/auth/me");
-        setUser(data);
-
-      } catch {
-        setUser(null);
-      }
-
+      setUser(null);
     } finally {
-
       setLoading(false);
-
     }
 
   }, []);
@@ -52,7 +37,6 @@ export function AuthProvider({ children }) {
 
   // Logout
   async function logout() {
-    await fetchUser();
     await handleLogout();
     setUser(null);
   }

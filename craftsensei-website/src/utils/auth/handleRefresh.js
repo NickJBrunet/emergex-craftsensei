@@ -5,12 +5,15 @@ export default async function handleRefresh() {
     const res = await fetch(`${BACKEND_BASE_URL}${USER_REFRESH_ENDPOINT}`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
     });
 
     if (!res.ok) {
         throw new Error("Refresh failed");
     }
 
-    return res.json();
+    const data = await res.json();
+
+    localStorage.setItem("access", data.access);
+
+    return data;
 }

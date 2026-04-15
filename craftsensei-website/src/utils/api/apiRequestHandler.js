@@ -4,15 +4,13 @@ import handleRefresh from "@/utils/auth/handleRefresh";
 export async function apiRequest(endpoint, options = {}, retry = true) {
   const url = `${BACKEND_BASE_URL}${endpoint}`;
 
-  const defaultOptions = {
-    credentials: "include",
-  };
-
   const config = {
-    ...defaultOptions,
     ...options,
     headers: {
       ...(options.body && { "Content-Type": "application/json" }),
+      ...(localStorage.getItem("access") && {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      }),
       ...(options.headers || {}),
     },
   };
@@ -22,8 +20,8 @@ export async function apiRequest(endpoint, options = {}, retry = true) {
   // On 401, attempt one token refresh then retry the original request
   if (res.status === 401 && retry) {
     try {
-      await handleRefresh();                                // get new access_token cookie
-      return apiRequest(endpoint, options, false);    // retry once, no further retries
+      await handleRefresh();
+      return apiRequest(endpoint, options, false);
     } catch {
       throw new Error("Session expired. Please log in again.");
     }

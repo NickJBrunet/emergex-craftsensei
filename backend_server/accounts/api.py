@@ -1,15 +1,14 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
 from ninja import Router
 from django.contrib.auth import authenticate, get_user_model
 from ninja.errors import HttpError
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from .auth import JWTAuth
 from .schemas import RegisterIn, LoginIn, TokenOut
 
 User = get_user_model()
-
 
 router = Router()
 
@@ -23,7 +22,6 @@ def get_tokens_for_user(user):
 
 
 @router.get("/me", auth=JWTAuth())
-@ensure_csrf_cookie
 def me(request):
     user = request.auth
 
@@ -35,14 +33,9 @@ def me(request):
         "email": user.email,
     })
 
-from rest_framework_simplejwt.exceptions import TokenError  # add to imports
 
 @router.post("/refresh")
 def refresh_token(request):
-    """
-    Validates the refresh_token cookie, rotates both tokens,
-    and sets fresh access_token + refresh_token cookies.
-    """
     token = request.COOKIES.get("refresh_token")
 
     if not token:
@@ -56,16 +49,26 @@ def refresh_token(request):
 
     tokens = get_tokens_for_user(user)
 
-    response = JsonResponse({"success": True})
+    return JsonResponse({
+        "access": tokens["access"]
+    })
 
-    response.set_cookie(
-        key="access_token",
-        value=tokens["access"],
-        httponly=True,
-        secure=True,
-        samesite="None",
-        path="/",
+
+@router.post("/register")
+def register(request, data: RegisterIn):
+    if User.objects.filter(email=data.email).exists():
+        raise HttpError(403, "Email already registered")
+
+    user = User.objects.create_user(
+        email=data.email,
+        password=data.password
     )
+
+    tokens = get_tokens_for_user(user)
+
+    response = JsonResponse({
+        "access": tokens["access"]
+    })
 
     response.set_cookie(
         key="refresh_token",
@@ -73,47 +76,14 @@ def refresh_token(request):
         httponly=True,
         secure=True,
         samesite="None",
-        path="/",
-    )
-
-    return response
-
-@router.post("/register", response=TokenOut)
-def register(request, data: RegisterIn):
-    """
-    Create a new user with secure hashed password.
-    Stored in PostgreSQL (accounts_user table).
-    """
-    if User.objects.filter(email=data.email).exists():
-        raise HttpError(403, "Email already registered")
-
-    user = User.objects.create_user(
-        email=data.email,
-        password=data.password  # hashed automatically
-    )
-
-    tokens = get_tokens_for_user(user)
-
-    response = JsonResponse({"success": True})
-
-    response.set_cookie(
-        key="access_token",
-        value=tokens["access"],
-        httponly=True,
-        secure=True,
-        samesite="None",
-        path="/",
+        path="/api/auth/refresh",
     )
 
     return response
 
 
-@router.post("/login", response=TokenOut)
+@router.post("/login")
 def login(request, data: LoginIn):
-    """
-    Authenticate user using email + password.
-    Returns JWT tokens.
-    """
     user = authenticate(
         request,
         email=data.email,
@@ -125,26 +95,17 @@ def login(request, data: LoginIn):
 
     tokens = get_tokens_for_user(user)
 
-    response = JsonResponse({"success": True})
+    response = JsonResponse({
+        "access": tokens["access"]
+    })
 
-    # Access token (short-lived)
-    response.set_cookie(
-        key="access_token",
-        value=tokens["access"],
-        httponly=True,
-        secure=True,
-        samesite="None",
-        path="/",
-    )
-
-    # Refresh token (optional but recommended)
     response.set_cookie(
         key="refresh_token",
         value=tokens["refresh"],
         httponly=True,
         secure=True,
         samesite="None",
-        path="/",
+        path="/api/auth/refresh",
     )
 
     return response
@@ -152,7 +113,6 @@ def login(request, data: LoginIn):
 
 @router.post("/logout", auth=JWTAuth())
 def logout(request):
-
     user = request.auth
 
     if not user:
@@ -161,13 +121,8 @@ def logout(request):
     response = JsonResponse({"success": True})
 
     response.delete_cookie(
-        key="access_token",
-        path="/",
-    )
-
-    response.delete_cookie(
         key="refresh_token",
-        path="/",
+        path="/api/auth/refresh",
     )
 
     return response
