@@ -31,7 +31,16 @@ export function AuthProvider({ children }) {
 
   // Login
   async function login(accountProp) {
-    await handleLogin(accountProp);
+    console.log("LOGIN FUNCTION CALLED");
+
+    const data = await handleLogin(accountProp);
+
+    console.log("LOGIN RESPONSE:", data);
+
+    localStorage.setItem("access", data.access);
+
+    console.log("AFTER SET:", localStorage.getItem("access"));
+
     await fetchUser();
   }
 
@@ -39,6 +48,10 @@ export function AuthProvider({ children }) {
   async function logout() {
     await handleLogout();
     setUser(null);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("access", data.access);
+    }
   }
 
   return (

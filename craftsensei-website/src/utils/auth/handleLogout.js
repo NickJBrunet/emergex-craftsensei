@@ -6,6 +6,4 @@ export default async function handleLogout() {
     await apiRequest(USER_LOGOUT_ENDPOINT, {
         method: "POST"
     });
-
-    localStorage.removeItem("access");
 }
