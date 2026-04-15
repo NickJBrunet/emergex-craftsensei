@@ -6,6 +6,7 @@ import {useServers} from "@/app/context/serverContext";
 import DeleteServerModal from "@/app/components/DeleteServerModal";
 import ServerInfoModal from "@/app/components/ServerInfoModal";
 import { usePing } from '@/utils/servers/usePing';
+import {useAuth} from "@/app/context/authContext";
 
 function ServerCard({ server, onView, onDelete }) {
     const { ping } = usePing(server.id);
