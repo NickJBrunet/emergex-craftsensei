@@ -86,14 +86,16 @@ export default function Home() {
           <div className="relative z-10 flex w-full flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:text-left lg:ml-30">
 
             {/* <div className="max-w-xl space-y-5 backdrop-blur-sm bg-black/40 rounded-2xl border border-emerald-500/40 p-8"> */}
-            <div className="max-w-xl space-y-5">
+
+            {/* bg-[#032406]/90 */}
+            <div className="max-w-xl space-y-5 rounded-2xl bg-black/50 backdrop-blur-xs border border-white/10 p-6 sm:bg-transparent sm:backdrop-blur-none sm:border-none sm:p-0">
               <p className="inline-flex rounded-full bg-emerald-900/50 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-emerald-200 [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
                 AI companion for Minecraft
               </p>
-              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl sm:[text-shadow:0_4px_8px_rgba(0,0,0,0.4)]">
+              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl [text-shadow:0_3px_6px_rgba(0,0,0,0.9)]">
                 Chat with your world, not just your friends.
               </h1>
-              <p className="text-base text-zinc-200 sm:text-lg [text-shadow:0_4px_8px_rgba(0,0,0,0.8)]">
+              <p className="text-sm text-zinc-100 sm:text-lg [text-shadow:0_2px_4px_rgba(0,0,0,0.9),0_4px_10px_rgba(0,0,0,0.8)]">
                 Craft Sensei Mod brings an intelligent chat bot <span className="">Crafty</span> into your
                 Minecraft server to answer crafting questions, suggest builds,
                 and help you survive the night.
