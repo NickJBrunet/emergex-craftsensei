@@ -61,7 +61,7 @@ export default function ApiKeysPage() {
           Manage API keys
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-300">
-          Generate and manage keys for your Craft Sensei integrations. Keys are currently stored locally.
+          Generate and manage keys for your Craft Sensei integrations.
         </p>
       </div>
 
