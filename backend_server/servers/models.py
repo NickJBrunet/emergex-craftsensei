@@ -22,6 +22,8 @@ class MinecraftServer(models.Model):
 
     name = models.CharField(max_length=100)
 
+    owner_ign = models.CharField(max_length=20)
+
     api_key = models.CharField(
         max_length=64,
         unique=True,
@@ -29,10 +31,14 @@ class MinecraftServer(models.Model):
         editable=False
     )
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    last_seen = models.DateTimeField(null=True, blank=True)
+
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
 
     def rotate_api_key(self):
         self.api_key = secrets.token_hex(32)
